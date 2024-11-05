@@ -18,12 +18,12 @@ public class Agencia {
     @Column(name = "CNPJ")
     private String cnpj;
 
-    @Column(name = "RAZAOSOCIAL")
+    @Column(name = "RAZAO_SOCIAL")
     private String razaoSocial;
 
-    @Column(name = "NOMEFANTASIA")
+    @Column(name = "NOME_FANTASIA")
     private String nomeFantasia;
 
-    @Column(name = "TAMANHOMAXIMODAFROTA")
+    @Column(name = "TAMANHO_MAXIMO_DA_FROTA")
     private Integer tamanhoMaximoDaFrota;
 }

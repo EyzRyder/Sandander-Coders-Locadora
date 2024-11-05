@@ -29,9 +29,9 @@ public class Veiculo {
     @Column(name = "AGENCIACNPJ")
     private String agenciaCNPJ;
 
-    @Column(name = "TIPOVEICULO")
+    @Column(name = "TIPO_VEICULO")
     private String tipoVeiculo;
 
-    @Column(name = "VEICULODISPONIVELPARALOCACAO")
+    @Column(name = "VEICULO_DISPONIVELa_PARA_LOCACAO")
     private boolean veiculoDisponivelParaLocacao;
 }
