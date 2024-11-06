@@ -40,4 +40,8 @@ public class ClienteService {
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
     }
 
+    public void deletar(Long id){
+        clienteRepository.deleteById(id);
+    }
+
 }
