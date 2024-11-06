@@ -26,4 +26,7 @@ public class Agencia {
 
     @Column(name = "TAMANHO_MAXIMO_DA_FROTA")
     private Integer tamanhoMaximoDaFrota;
+
+    @Column(name = "ENDERECO")
+    private Integer endereco;
 }
