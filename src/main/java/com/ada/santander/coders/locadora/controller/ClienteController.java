@@ -34,7 +34,22 @@ public class ClienteController {
     }
 
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Cliente> atualizar(@PathVariable Long id, @RequestBody Cliente clienteAtualizado){
+            try {
+                Cliente cliente = clienteService.atualizar(id, clienteAtualizado);
+                return ResponseEntity.ok(cliente);
+            } catch (RuntimeException e) {
+                return ResponseEntity.notFound().build();
+            }
+    }
 
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id){
+        clienteService.deletar(id);
+        return ResponseEntity.noContent().build();
+    }
 
 
 }
