@@ -22,7 +22,11 @@ public class AgenciaService {
     private AgenciaMapper agenciaMapper;
 
     public Agencia criarAgencia(Agencia agencia) {
-        // TODO verificar se existe a gencia já
+        if (verificarAgenciaExistente(agencia.getId())) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Agencia com Id " + agencia.getId() + " já existe"
+            );
+        }
         return agenciaRepository.save(agencia);
     }
 
@@ -33,21 +37,25 @@ public class AgenciaService {
 
     public Agencia atualizarAgencia(Long id, Agencia agenciaAtualizado) {
         Agencia agenciaExistente = this.buscarAgenciaPorId(id);
-        agenciaMapper.atualizarAgencia(agenciaAtualizado,agenciaExistente);
+        agenciaMapper.atualizarAgencia(agenciaAtualizado, agenciaExistente);
         return agenciaRepository.save(agenciaExistente);
     }
 
     public Agencia deletarAgencia(Long id) {
-       // TODO adicionar verificação
         Agencia agenciaExistente = this.buscarAgenciaPorId(id);
         agenciaRepository.delete(agenciaExistente);
         return agenciaExistente;
     }
 
-    private Agencia buscarAgenciaPorId(Long id){
+    private Agencia buscarAgenciaPorId(Long id) {
         return agenciaRepository.findById(id)
-                .orElseThrow(()-> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Agencia com Id "+id
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Agencia com Id " + id
                 ));
+    }
+
+    private boolean verificarAgenciaExistente(Long id) {
+        Optional<Agencia> agenciaExistente = agenciaRepository.findById(id);
+        return agenciaExistente.isPresent();
     }
 }
