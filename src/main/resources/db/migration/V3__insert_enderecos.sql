@@ -1,0 +1,10 @@
+insert into ENDERECO ( CEP, LOGRADOURO, BAIRRO, CIDADE, UF, REGIAO) values ( '79010913', 'Rua José Antônio Pereira', 'Monte Castelo', 'Campo Grande', 'MS', 'Centro-Oeste');
+insert into ENDERECO ( CEP, LOGRADOURO, BAIRRO, CIDADE, UF, REGIAO) values ( '59025560', 'Travessa Coronel Bonifácio', 'Cidade Alta', 'Natal', 'RN', 'Nordeste');
+insert into ENDERECO ( CEP, LOGRADOURO, BAIRRO, CIDADE, UF, REGIAO) values ( '59160772', 'Rua Tenente Antônio Augusto Severo', 'Pium (Distrito Litoral)', 'Parnamirim', 'RN', 'Nordeste');
+insert into ENDERECO ( CEP, LOGRADOURO, BAIRRO, CIDADE, UF, REGIAO) values ( '76825452', 'Rua Israel', 'Planalto', 'Porto Velho', 'RO', 'Norte');
+insert into ENDERECO ( CEP, LOGRADOURO, BAIRRO, CIDADE, UF, REGIAO) values ( '69104042', 'Beco Aquário', 'São Jorge', 'Itacoatiara', 'AM', 'Norte');
+insert into ENDERECO ( CEP, LOGRADOURO, BAIRRO, CIDADE, UF, REGIAO) values ( '85857160', 'Rua MBoicy', 'Campos do Iguaçu', 'Foz do Iguaçu', 'PR', 'Sul');
+insert into ENDERECO ( CEP, LOGRADOURO, BAIRRO, CIDADE, UF, REGIAO) values ( '76913650', 'Rua Júlio Prestes', 'São Pedro', 'Ji-Paraná', 'RO', 'Norte');
+insert into ENDERECO ( CEP, LOGRADOURO, BAIRRO, CIDADE, UF, REGIAO) values ( '76906754', 'Rua Liberdade', 'Colina Park II', 'Ji-Paraná', 'RO', 'Norte');
+insert into ENDERECO ( CEP, LOGRADOURO, BAIRRO, CIDADE, UF, REGIAO) values ( '24417480', 'Rua Professor Alencar Terra', 'Engenho Pequeno', 'São Gonçalo', 'RJ', 'Sudeste');
+insert into ENDERECO ( CEP, LOGRADOURO, BAIRRO, CIDADE, UF, REGIAO) values ( '96503656', 'Rua Ricardo Schaurich', 'Tibiriça', 'Cachoeira do Sul', 'RS', 'Sul');
