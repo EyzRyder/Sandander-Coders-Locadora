@@ -2,6 +2,7 @@ package com.ada.santander.coders.locadora.controller;
 
 import com.ada.santander.coders.locadora.entity.Agencia;
 import com.ada.santander.coders.locadora.service.AgenciaService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,11 +11,9 @@ import org.springframework.data.domain.Page;
 @RestController
 @RequestMapping("/agencia")
 public class AgenciaController {
-    private final AgenciaService agenciaService;
 
-    public AgenciaController(AgenciaService agenciaService) {
-        this.agenciaService = agenciaService;
-    }
+    @Autowired
+    private AgenciaService agenciaService;
 
     @PostMapping("/criar-agencia")
     public ResponseEntity<Agencia> criarAgencia(@RequestBody Agencia agencia) {

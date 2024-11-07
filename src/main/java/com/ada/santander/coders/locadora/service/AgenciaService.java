@@ -3,6 +3,7 @@ package com.ada.santander.coders.locadora.service;
 import com.ada.santander.coders.locadora.entity.Agencia;
 import com.ada.santander.coders.locadora.mappers.AgenciaMapper;
 import com.ada.santander.coders.locadora.repository.AgenciaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,13 +16,10 @@ import java.util.Optional;
 @Service
 public class AgenciaService {
 
+    @Autowired
     private AgenciaRepository agenciaRepository;
+    @Autowired
     private AgenciaMapper agenciaMapper;
-
-    public AgenciaService(AgenciaRepository agenciaRepository, AgenciaMapper agenciaMapper) {
-        this.agenciaRepository = agenciaRepository;
-        this.agenciaMapper = agenciaMapper;
-    }
 
     public Agencia criarAgencia(Agencia agencia) {
         // TODO verificar se existe a gencia já
