@@ -34,4 +34,8 @@ public class Veiculo {
 
     @Column(name = "VEICULO_DISPONIVELa_PARA_LOCACAO")
     private boolean veiculoDisponivelParaLocacao;
+
+    @ManyToOne
+    @JoinColumn(name = "AGENCIA_ID")
+    private Agencia agencia;
 }

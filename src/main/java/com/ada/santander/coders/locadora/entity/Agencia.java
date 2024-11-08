@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -20,4 +22,8 @@ public class Agencia {
     @OneToOne
     @JoinColumn(name = "ENDERECO_ID", referencedColumnName = "id")
     private Endereco endereco;
+
+    @OneToMany(mappedBy = "agencia", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "VEICULO_ID", referencedColumnName = "id")
+    private List<Veiculo> veiculos;
 }
