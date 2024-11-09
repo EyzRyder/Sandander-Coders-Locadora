@@ -35,11 +35,11 @@ public class AgenciaService {
 
     private static final String CEP_REGEX = "^[0-9]{5}-?[0-9]{3}$";
 
-    public Agencia criarAgencia(AgenciaDTO agenciaDTO, String cep) {
+    public Agencia criarAgencia(AgenciaDTO agenciaDTO) {
         Agencia agenciaNovo = new Agencia();
         agenciaNovo.setTamanhoMaximoDaFrota(agenciaDTO.getTamanhoMaximoDaFrota());
         agenciaNovo.setVeiculos(new ArrayList<Veiculo>());
-        Endereco endereco = getEnderecoByCep(cep);
+        Endereco endereco = getEnderecoByCep(agenciaDTO.getCep());
         agenciaNovo.setEndereco(endereco);
 
         return agenciaRepository.save(agenciaNovo);
@@ -50,10 +50,15 @@ public class AgenciaService {
         return agenciaRepository.findAll(pageable);
     }
 
-    public Agencia atualizarAgencia(Long id, Agencia agenciaAtualizado, String cep) {
+    public Agencia atualizarAgencia(Long id, AgenciaDTO agenciaAtualizado) {
         Agencia agenciaExistente = this.buscarAgenciaPorId(id);
-        agenciaAtualizado.setEndereco(getEnderecoByCep(cep));
-        agenciaMapper.atualizarAgencia(agenciaAtualizado, agenciaExistente);
+        Agencia agenciaNovo = new Agencia();
+        agenciaNovo.setTamanhoMaximoDaFrota(agenciaAtualizado.getTamanhoMaximoDaFrota());
+        if (!agenciaExistente.getEndereco().getCep().contains(agenciaAtualizado.getCep())) {
+            Endereco endereco = getEnderecoByCep(agenciaAtualizado.getCep());
+            agenciaNovo.setEndereco(endereco);
+        }
+        agenciaMapper.atualizarAgencia(agenciaNovo, agenciaExistente);
         return agenciaRepository.save(agenciaExistente);
     }
 

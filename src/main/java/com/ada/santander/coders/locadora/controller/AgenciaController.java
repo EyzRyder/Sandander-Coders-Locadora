@@ -19,14 +19,14 @@ public class AgenciaController {
     @Autowired
     private AgenciaService agenciaService;
 
-    @PostMapping("/criar-agencia/{cep}")
+    @PostMapping("/criar-agencia")
     @Operation(summary = "Create a new Agencia", description = "Creates a new Agencia in the system.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Agencia created successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid request")
     })
-    public ResponseEntity<Agencia> criarAgencia(@RequestBody AgenciaDTO agencia, @PathVariable String cep) {
-        Agencia agenciaNovo = agenciaService.criarAgencia(agencia,cep);
+    public ResponseEntity<Agencia> criarAgencia(@RequestBody AgenciaDTO agencia) {
+        Agencia agenciaNovo = agenciaService.criarAgencia(agencia);
         return ResponseEntity.status(HttpStatus.CREATED).body(agenciaNovo);
     }
 
@@ -37,8 +37,8 @@ public class AgenciaController {
             @ApiResponse(responseCode = "404", description = "Agencia not found"),
             @ApiResponse(responseCode = "400", description = "Invalid request")
     })
-    public ResponseEntity<Agencia> atualizaAgencia(@PathVariable Long id, @RequestBody Agencia agencia,@RequestParam String cep) {
-        Agencia agenciaAtualizado = agenciaService.atualizarAgencia(id, agencia,cep);
+    public ResponseEntity<Agencia> atualizaAgencia(@PathVariable Long id, @RequestBody AgenciaDTO agencia) {
+        Agencia agenciaAtualizado = agenciaService.atualizarAgencia(id, agencia);
         return ResponseEntity.ok().body(agenciaAtualizado);
     }
 
