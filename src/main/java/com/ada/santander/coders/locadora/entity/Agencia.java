@@ -1,9 +1,11 @@
 package com.ada.santander.coders.locadora.entity;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -12,18 +14,17 @@ import lombok.Setter;
 public class Agencia {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "CNPJ")
-    private String cnpj;
+    @Column(name = "TAMANHO_MAXIMO_DA_FROTA")
+    private int tamanhoMaximoDaFrota;
 
-    @Column(name = "RAZAOSOCIAL")
-    private String razaoSocial;
+    @OneToOne
+    @JoinColumn(name = "ENDERECO_ID", referencedColumnName = "CEP")
+    private Endereco endereco;
 
-    @Column(name = "NOMEFANTASIA")
-    private String nomeFantasia;
-
-    @Column(name = "TAMANHOMAXIMODAFROTA")
-    private Integer tamanhoMaximoDaFrota;
+    @JsonIgnore
+    @OneToMany(mappedBy = "agencia", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Veiculo> veiculos;
 }

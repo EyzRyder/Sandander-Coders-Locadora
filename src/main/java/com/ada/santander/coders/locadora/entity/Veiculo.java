@@ -11,7 +11,7 @@ import lombok.Setter;
 @Table(name = "VEICULO")
 public class Veiculo {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "MODELO")
@@ -26,12 +26,13 @@ public class Veiculo {
     @Column(name = "COR")
     private String cor;
 
-    @Column(name = "AGENCIACNPJ")
-    private String agenciaCNPJ;
-
-    @Column(name = "TIPOVEICULO")
+    @Column(name = "TIPO_VEICULO")
     private String tipoVeiculo;
 
-    @Column(name = "VEICULODISPONIVELPARALOCACAO")
+    @Column(name = "VEICULO_DISPONIVEL_PARA_LOCACAO")
     private boolean veiculoDisponivelParaLocacao;
+
+    @ManyToOne
+    @JoinColumn(name = "AGENCIA_ID")
+    private Agencia agencia;
 }
