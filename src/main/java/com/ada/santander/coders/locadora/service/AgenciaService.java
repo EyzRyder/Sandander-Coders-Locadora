@@ -3,7 +3,6 @@ package com.ada.santander.coders.locadora.service;
 import com.ada.santander.coders.locadora.dto.AgenciaDTO;
 import com.ada.santander.coders.locadora.entity.Agencia;
 import com.ada.santander.coders.locadora.entity.Endereco;
-import com.ada.santander.coders.locadora.entity.Veiculo;
 import com.ada.santander.coders.locadora.mappers.AgenciaMapper;
 import com.ada.santander.coders.locadora.repository.AgenciaRepository;
 import com.ada.santander.coders.locadora.repository.EnderecoRepository;
@@ -24,21 +23,26 @@ import java.util.Optional;
 @Service
 public class AgenciaService {
 
-    @Autowired
-    private AgenciaRepository agenciaRepository;
-    @Autowired
-    private EnderecoRepository enderecoRepository;
-    @Autowired
-    private AgenciaMapper agenciaMapper;
-    @Autowired
-    private WebClient webClient;
+    private final AgenciaRepository agenciaRepository;
+    private final EnderecoRepository enderecoRepository;
+    private final AgenciaMapper agenciaMapper;
+    private final WebClient webClient;
 
     private static final String CEP_REGEX = "^[0-9]{5}-?[0-9]{3}$";
+
+
+    @Autowired
+    public AgenciaService(AgenciaRepository agenciaRepository, EnderecoRepository enderecoRepository, AgenciaMapper agenciaMapper, WebClient webClient) {
+        this.agenciaRepository = agenciaRepository;
+        this.enderecoRepository = enderecoRepository;
+        this.agenciaMapper = agenciaMapper;
+        this.webClient = webClient;
+    }
 
     public Agencia criarAgencia(AgenciaDTO agenciaDTO) {
         Agencia agenciaNovo = new Agencia();
         agenciaNovo.setTamanhoMaximoDaFrota(agenciaDTO.getTamanhoMaximoDaFrota());
-        agenciaNovo.setVeiculos(new ArrayList<Veiculo>());
+        agenciaNovo.setVeiculos(new ArrayList<>());
         Endereco endereco = getEnderecoByCep(agenciaDTO.getCep());
         agenciaNovo.setEndereco(endereco);
 
@@ -54,6 +58,7 @@ public class AgenciaService {
         Agencia agenciaExistente = this.buscarAgenciaPorId(id);
         Agencia agenciaNovo = new Agencia();
         agenciaNovo.setTamanhoMaximoDaFrota(agenciaAtualizado.getTamanhoMaximoDaFrota());
+
         if (!agenciaExistente.getEndereco().getCep().contains(agenciaAtualizado.getCep())) {
             Endereco endereco = getEnderecoByCep(agenciaAtualizado.getCep());
             agenciaNovo.setEndereco(endereco);
