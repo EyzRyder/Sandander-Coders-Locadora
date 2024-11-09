@@ -6,6 +6,7 @@ import com.ada.santander.coders.locadora.service.AgenciaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,36 +15,37 @@ import org.springframework.data.domain.Page;
 
 @RestController
 @RequestMapping("/agencia")
+@Tag(name = "Agencia", description = "API para gestão de agencias")
 public class AgenciaController {
 
     @Autowired
     private AgenciaService agenciaService;
 
-    @PostMapping("/criar-agencia/{cep}")
-    @Operation(summary = "Create a new Agencia", description = "Creates a new Agencia in the system.")
+    @PostMapping("/criar-agencia")
+    @Operation(summary = "Salvar um novo Agencia")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Agencia created successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid request")
     })
-    public ResponseEntity<Agencia> criarAgencia(@RequestBody AgenciaDTO agencia, @PathVariable String cep) {
-        Agencia agenciaNovo = agenciaService.criarAgencia(agencia,cep);
+    public ResponseEntity<Agencia> criarAgencia(@RequestBody AgenciaDTO agencia) {
+        Agencia agenciaNovo = agenciaService.criarAgencia(agencia);
         return ResponseEntity.status(HttpStatus.CREATED).body(agenciaNovo);
     }
 
     @PutMapping("/atualiza-agencia/{id}")
-    @Operation(summary = "Update an existing Agencia", description = "Updates an existing Agencia by its ID.")
+    @Operation(summary = "Atualizar um agencia existente", description = "Atualizar um agencia existente pelo ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Agencia updated successfully"),
             @ApiResponse(responseCode = "404", description = "Agencia not found"),
             @ApiResponse(responseCode = "400", description = "Invalid request")
     })
-    public ResponseEntity<Agencia> atualizaAgencia(@PathVariable Long id, @RequestBody Agencia agencia,@RequestParam String cep) {
-        Agencia agenciaAtualizado = agenciaService.atualizarAgencia(id, agencia,cep);
+    public ResponseEntity<Agencia> atualizaAgencia(@PathVariable Long id, @RequestBody AgenciaDTO agencia) {
+        Agencia agenciaAtualizado = agenciaService.atualizarAgencia(id, agencia);
         return ResponseEntity.ok().body(agenciaAtualizado);
     }
 
     @GetMapping("/busca")
-    @Operation(summary = "Paginate Agencias", description = "Retrieves a paginated list of Agencias.")
+    @Operation(summary = "Paginate Agencias", description = "Retorne uma paginação de Agencias.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Paginated list retrieved successfully")
     })
@@ -53,7 +55,7 @@ public class AgenciaController {
     }
 
     @DeleteMapping("/deletar/{id}")
-    @Operation(summary = "Delete an Agencia", description = "Deletes an Agencia by its ID.")
+    @Operation(summary = "Deletar um Agencia", description = "Deletar um Agencia pelo ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Agencia deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Agencia not found")
