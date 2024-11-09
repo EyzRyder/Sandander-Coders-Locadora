@@ -1,7 +1,6 @@
 package com.ada.santander.coders.locadora.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,4 +15,6 @@ public class AgenciaDTO {
     @NotBlank(message = "O nome é obrigatório")
     private int tamanhoMaximoDaFrota;
 
+    @NotBlank(message = "O nome é obrigatório")
+    private String cep;
 }
