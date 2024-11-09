@@ -14,7 +14,7 @@ import java.util.List;
 public class Agencia {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "TAMANHO_MAXIMO_DA_FROTA")
