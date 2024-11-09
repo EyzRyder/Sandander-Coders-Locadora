@@ -11,11 +11,8 @@ import lombok.Setter;
 public class Endereco {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
     @Column(name = "CEP")
-    private int cep;
+    private String cep;
     @Column(name = "LOGRADOURO")
     private String logradouro;
     @Column(name = "BAIRRO")
@@ -26,4 +23,5 @@ public class Endereco {
     private String cidade;
     @Column(name = "REGIAO")
     private String regiao;
+
 }

@@ -1,5 +1,6 @@
 package com.ada.santander.coders.locadora.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,10 +21,10 @@ public class Agencia {
     private int tamanhoMaximoDaFrota;
 
     @OneToOne
-    @JoinColumn(name = "ENDERECO_ID", referencedColumnName = "id")
+    @JoinColumn(name = "ENDERECO_ID", referencedColumnName = "CEP")
     private Endereco endereco;
 
-    @OneToMany(mappedBy = "agencia", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "VEICULO_ID", referencedColumnName = "id")
+    @JsonIgnore
+    @OneToMany(mappedBy = "agencia", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Veiculo> veiculos;
 }

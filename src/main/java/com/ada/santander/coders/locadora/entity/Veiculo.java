@@ -26,13 +26,10 @@ public class Veiculo {
     @Column(name = "COR")
     private String cor;
 
-    @Column(name = "AGENCIACNPJ")
-    private String agenciaCNPJ;
-
     @Column(name = "TIPO_VEICULO")
     private String tipoVeiculo;
 
-    @Column(name = "VEICULO_DISPONIVELa_PARA_LOCACAO")
+    @Column(name = "VEICULO_DISPONIVEL_PARA_LOCACAO")
     private boolean veiculoDisponivelParaLocacao;
 
     @ManyToOne
