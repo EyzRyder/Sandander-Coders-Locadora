@@ -2,6 +2,7 @@ package com.ada.santander.coders.locadora.service;
 
 import com.ada.santander.coders.locadora.dto.AgenciaDTO;
 import com.ada.santander.coders.locadora.entity.Agencia;
+import com.ada.santander.coders.locadora.entity.Cliente;
 import com.ada.santander.coders.locadora.entity.Endereco;
 import com.ada.santander.coders.locadora.mappers.AgenciaMapper;
 import com.ada.santander.coders.locadora.repository.AgenciaRepository;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
@@ -54,6 +56,8 @@ public class AgenciaService {
         return agenciaRepository.findAll(pageable);
     }
 
+
+
     public Agencia atualizarAgencia(Long id, AgenciaDTO agenciaAtualizado) {
         Agencia agenciaExistente = this.buscarAgenciaPorId(id);
         Agencia agenciaNovo = new Agencia();
@@ -73,7 +77,8 @@ public class AgenciaService {
         return agenciaExistente;
     }
 
-    private Agencia buscarAgenciaPorId(Long id) {
+    @Transactional
+    public Agencia buscarAgenciaPorId(Long id) {
         return agenciaRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Agencia com Id " + id
