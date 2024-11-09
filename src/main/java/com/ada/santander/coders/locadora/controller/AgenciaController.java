@@ -37,8 +37,8 @@ public class AgenciaController {
             @ApiResponse(responseCode = "404", description = "Agencia not found"),
             @ApiResponse(responseCode = "400", description = "Invalid request")
     })
-    public ResponseEntity<Agencia> atualizaAgencia(@PathVariable Long id, @RequestBody Agencia agencia) {
-        Agencia agenciaAtualizado = agenciaService.atualizarAgencia(id, agencia);
+    public ResponseEntity<Agencia> atualizaAgencia(@PathVariable Long id, @RequestBody Agencia agencia,@RequestParam String cep) {
+        Agencia agenciaAtualizado = agenciaService.atualizarAgencia(id, agencia,cep);
         return ResponseEntity.ok().body(agenciaAtualizado);
     }
 
