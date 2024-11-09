@@ -2,6 +2,7 @@ package com.ada.santander.coders.locadora.controller;
 
 import com.ada.santander.coders.locadora.dto.AgenciaDTO;
 import com.ada.santander.coders.locadora.entity.Agencia;
+import com.ada.santander.coders.locadora.entity.Cliente;
 import com.ada.santander.coders.locadora.service.AgenciaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -44,7 +45,7 @@ public class AgenciaController {
         return ResponseEntity.ok().body(agenciaAtualizado);
     }
 
-    @GetMapping("/busca")
+    @GetMapping("/buscar")
     @Operation(summary = "Paginate Agencias", description = "Retorne uma paginação de Agencias.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Paginated list retrieved successfully")
@@ -52,6 +53,18 @@ public class AgenciaController {
     public ResponseEntity<Page<Agencia>> paginarAgencia(@RequestParam int pagina, @RequestParam int tamanho) {
         Page<Agencia> agenciaList = agenciaService.buscarAgenciaPaginados(pagina, tamanho);
         return ResponseEntity.ok(agenciaList);
+    }
+
+
+    @Operation(summary = "Buscar agencia por ID", description = "Busca um agencia pelo ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Agencia encontrado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Agencia não encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @GetMapping("/buscar/{id}")
+    public ResponseEntity<Agencia> buscarAgenciaPorId(@PathVariable Long id){
+        return ResponseEntity.ok(agenciaService.buscarAgenciaPorId(id));
     }
 
     @DeleteMapping("/deletar/{id}")
