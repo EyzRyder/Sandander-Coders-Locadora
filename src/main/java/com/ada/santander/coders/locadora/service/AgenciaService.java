@@ -39,7 +39,8 @@ public class AgenciaService {
         Agencia agenciaNovo = new Agencia();
         agenciaNovo.setTamanhoMaximoDaFrota(agenciaDTO.getTamanhoMaximoDaFrota());
         agenciaNovo.setVeiculos(new ArrayList<Veiculo>());
-        agenciaNovo.setEndereco(getEnderecoByCep(cep));
+        Endereco endereco = getEnderecoByCep(cep);
+        agenciaNovo.setEndereco(endereco);
 
         return agenciaRepository.save(agenciaNovo);
     }
