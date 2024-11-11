@@ -1,6 +1,7 @@
 package com.ada.santander.coders.locadora.entity;
 
 
+import com.ada.santander.coders.locadora.entity.enums.TipoVeiculo;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,8 +27,10 @@ public class Veiculo {
     @Column(name = "COR")
     private String cor;
 
-    @Column(name = "TIPO_VEICULO")
-    private String tipoVeiculo;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "TIPO_VEICULO", nullable = false)
+    protected TipoVeiculo tipoVeiculo;
 
     @Column(name = "VEICULO_DISPONIVEL_PARA_LOCACAO")
     private boolean veiculoDisponivelParaLocacao;
