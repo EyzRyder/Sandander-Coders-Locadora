@@ -24,7 +24,6 @@ public class Agencia {
     @JoinColumn(name = "ENDERECO_ID", referencedColumnName = "CEP")
     private Endereco endereco;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "agencia", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Veiculo> veiculos;
 }

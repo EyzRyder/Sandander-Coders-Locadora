@@ -2,6 +2,7 @@ package com.ada.santander.coders.locadora.entity;
 
 
 import com.ada.santander.coders.locadora.entity.enums.TipoVeiculo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,5 +38,6 @@ public class Veiculo {
 
     @ManyToOne
     @JoinColumn(name = "AGENCIA_ID")
+    @JsonIgnore
     private Agencia agencia;
 }
