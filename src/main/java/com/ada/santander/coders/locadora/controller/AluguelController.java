@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/aluguel")
-@Tag(name = "Alugeul", description = "API para gestão de aluguel")
+@Tag(name = "Aluguel", description = "API para gestão de aluguel")
 public class AluguelController {
 
     ComprovanteAluguelService comprovanteAluguelService;
