@@ -32,9 +32,9 @@ public class AluguelController {
         return ResponseEntity.status(HttpStatus.CREATED).body(comprovanteAluguel);
     }
 
-    @PostMapping("/devolver")
+    @PostMapping("/devolver/{idComprovanteAluguel}")
     @Operation(summary = "Devolver Veiculo", description = "Realiza a devolução de um veículo.")
-    public ResponseEntity<?> devolverVeiculo(@RequestParam Long idComprovanteAluguel) {
+    public ResponseEntity<?> devolverVeiculo(@PathVariable Long idComprovanteAluguel) {
         try {
             Comprovante comprovanteDevolucao = aluguelService.devolverVeiculo(idComprovanteAluguel);
             return ResponseEntity.status(HttpStatus.CREATED).body(comprovanteDevolucao);

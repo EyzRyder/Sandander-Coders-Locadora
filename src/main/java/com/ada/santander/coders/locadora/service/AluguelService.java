@@ -22,8 +22,9 @@ public class AluguelService {
     private final ComprovanteAluguelService comprovanteAluguelService;
     private final ComprovanteDevolucaoService comprovanteDevolucaoService;
     private final ComprovanteDevolucaoRepository comprovanteDevolucaoRepository;
+
     @Autowired
-    public AluguelService(VeiculoRepository veiculoRepository, AgenciaRepository agenciaRepository, ComprovanteAluguelRepository comprovanteAluguelRepository, ComprovanteAluguelService comprovanteAluguelService, ComprovanteDevolucaoService comprovanteDevolucaoService,ComprovanteDevolucaoRepository comprovanteDevolucaoRepository) {
+    public AluguelService(VeiculoRepository veiculoRepository, AgenciaRepository agenciaRepository, ComprovanteAluguelRepository comprovanteAluguelRepository, ComprovanteAluguelService comprovanteAluguelService, ComprovanteDevolucaoService comprovanteDevolucaoService, ComprovanteDevolucaoRepository comprovanteDevolucaoRepository) {
         this.veiculoRepository = veiculoRepository;
         this.agenciaRepository = agenciaRepository;
         this.comprovanteAluguelRepository = comprovanteAluguelRepository;
@@ -34,6 +35,7 @@ public class AluguelService {
     }
 
     public ComprovanteAluguel alugarVeiculo(AluguelDTO aluguelDTO) {
+        try {
         agenciaRepository.findById(aluguelDTO.getIdAgencia()).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Agencia com Id " + aluguelDTO.getIdAgencia() + " não foi encontrado!"
         ));
@@ -53,17 +55,18 @@ public class AluguelService {
         comprovanteAluguelRepository.save(comprovante);
 
         return comprovante;
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Erro ao tentar alugar o veículo: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro inesperado ao tentar alugar o veículo: " + e.getMessage(), e);
+        }
     }
 
     public ComprovanteDevolucao devolverVeiculo(Long idComprovante) {
         try {
-            Optional<ComprovanteAluguel> comprovanteAluguelOpt = comprovanteAluguelRepository.findById(idComprovante);
-
-            if (comprovanteAluguelOpt.isEmpty()) {
-                throw new IllegalArgumentException("Comprovante de aluguel não encontrado com o ID fornecido.");
-            }
-
-            ComprovanteAluguel comprovanteAluguel = comprovanteAluguelOpt.get();
+            ComprovanteAluguel comprovanteAluguel = comprovanteAluguelRepository.findById(idComprovante).orElseThrow(() -> new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Comprovante de aluguel não encontrado com o ID " + idComprovante
+            ));
 
             ComprovanteDevolucao novoComprovanteDevolucao = comprovanteDevolucaoService.criarDevolucao(comprovanteAluguel);
 
