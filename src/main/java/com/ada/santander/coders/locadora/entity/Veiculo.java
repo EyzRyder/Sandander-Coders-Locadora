@@ -2,7 +2,7 @@ package com.ada.santander.coders.locadora.entity;
 
 
 import com.ada.santander.coders.locadora.entity.enums.TipoVeiculo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,15 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "VEICULO")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Veiculo {
+
+    public static class Views {
+        public static class Public {}
+
+        public static class Internal extends Public {}
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,6 +46,6 @@ public class Veiculo {
 
     @ManyToOne
     @JoinColumn(name = "AGENCIA_ID")
-    @JsonIgnore
+    //@JsonIgnore
     private Agencia agencia;
 }
