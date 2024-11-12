@@ -1,5 +1,6 @@
 package com.ada.santander.coders.locadora.controller;
 
+import com.ada.santander.coders.locadora.dto.AluguelDTO;
 import com.ada.santander.coders.locadora.entity.Comprovante;
 import com.ada.santander.coders.locadora.service.AluguelService;
 import com.ada.santander.coders.locadora.service.ComprovanteAluguelService;
@@ -25,17 +26,10 @@ public class AluguelController {
     }
 
     @PostMapping("/alugar")
-    @Operation(summary = "Alugar Veiculo", description = "Realiza o aluguel de um veículo.")
-    public ResponseEntity<?> alugarVeiculo(
-            @RequestParam Long idUsuario,
-            @RequestParam Long idAgencia,
-            @RequestParam Long idVeiculo) {
-        try {
-            Comprovante comprovanteAluguel = aluguelService.alugarVeiculo(idUsuario, idAgencia, idVeiculo);
-            return ResponseEntity.status(HttpStatus.CREATED).body(comprovanteAluguel);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao alugar veículo: " + e.getMessage());
-        }
+    @Operation(summary = "Alugar Veiculo", description = "Realiza o aluguel de um veículo")
+    public ResponseEntity<?> alugarVeiculo(@RequestBody AluguelDTO aluguelDTO) {
+        Comprovante comprovanteAluguel = aluguelService.alugarVeiculo(aluguelDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(comprovanteAluguel);
     }
 
     @PostMapping("/devolver")

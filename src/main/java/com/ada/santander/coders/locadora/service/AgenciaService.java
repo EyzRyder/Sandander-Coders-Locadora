@@ -56,8 +56,6 @@ public class AgenciaService {
         return agenciaRepository.findAll(pageable);
     }
 
-
-
     public Agencia atualizarAgencia(Long id, AgenciaDTO agenciaAtualizado) {
         Agencia agenciaExistente = this.buscarAgenciaPorId(id);
         Agencia agenciaNovo = new Agencia();

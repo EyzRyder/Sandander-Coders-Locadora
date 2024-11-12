@@ -1,21 +1,32 @@
 package com.ada.santander.coders.locadora.service;
 
 import com.ada.santander.coders.locadora.dto.VeiculoDTO;
+import com.ada.santander.coders.locadora.entity.Agencia;
 import com.ada.santander.coders.locadora.entity.Veiculo;
+import com.ada.santander.coders.locadora.repository.AgenciaRepository;
 import com.ada.santander.coders.locadora.repository.VeiculoRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
 @Service
 public class VeiculoService {
 
+    private final VeiculoRepository veiculoRepository;
+    private final AgenciaRepository agenciaRepository;
+
     @Autowired
-    private VeiculoRepository veiculoRepository;
+    public VeiculoService(VeiculoRepository veiculoRepository, AgenciaRepository agenciaRepository) {
+        this.veiculoRepository = veiculoRepository;
+        this.agenciaRepository = agenciaRepository;
+    }
 
     public Veiculo createVeiculo(VeiculoDTO veiculoDTO) {
         Veiculo veiculoNovo = new Veiculo();
@@ -26,10 +37,21 @@ public class VeiculoService {
         veiculoNovo.setCor(veiculoDTO.getCor());
         veiculoNovo.setTipoVeiculo(veiculoDTO.getTipoVeiculo());
         veiculoNovo.setVeiculoDisponivelParaLocacao(true);
+
+        Agencia agencia = agenciaRepository.findById(veiculoDTO.getAgenciaId()).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Agencia com Id " + veiculoDTO.getAgenciaId()+" não foi encontrado!"
+        ));
+
+        if(agencia.getTamanhoMaximoDaFrota()== agencia.getVeiculos().size()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Agencia com Id " + veiculoDTO.getAgenciaId() + " já está comm capacidade maxima.");
+        }
+        veiculoNovo.setAgencia(agencia);
+
         return veiculoRepository.save(veiculoNovo);
     }
 
-    public Page<Veiculo> getAllVeiculos(Pageable pageable) {
+    public Page<Veiculo> getAllVeiculos(int pagina, int tamanho) {
+        Pageable pageable = PageRequest.of(pagina, tamanho);
         return veiculoRepository.findAll(pageable);
     }
 

@@ -1,61 +1,58 @@
 package com.ada.santander.coders.locadora.service;
 
+import com.ada.santander.coders.locadora.dto.AluguelDTO;
 import com.ada.santander.coders.locadora.entity.ComprovanteAluguel;
 import com.ada.santander.coders.locadora.entity.ComprovanteDevolucao;
 import com.ada.santander.coders.locadora.entity.Veiculo;
+import com.ada.santander.coders.locadora.repository.AgenciaRepository;
 import com.ada.santander.coders.locadora.repository.ComprovanteAluguelRepository;
 import com.ada.santander.coders.locadora.repository.ComprovanteDevolucaoRepository;
 import com.ada.santander.coders.locadora.repository.VeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class AluguelService {
 
+    private final VeiculoRepository veiculoRepository;
+    private final AgenciaRepository agenciaRepository;
+    private final ComprovanteAluguelRepository comprovanteAluguelRepository;
+    private final ComprovanteAluguelService comprovanteAluguelService;
+    private final ComprovanteDevolucaoService comprovanteDevolucaoService;
+    private final ComprovanteDevolucaoRepository comprovanteDevolucaoRepository;
     @Autowired
-    private VeiculoRepository veiculoRepository;
+    public AluguelService(VeiculoRepository veiculoRepository, AgenciaRepository agenciaRepository, ComprovanteAluguelRepository comprovanteAluguelRepository, ComprovanteAluguelService comprovanteAluguelService, ComprovanteDevolucaoService comprovanteDevolucaoService,ComprovanteDevolucaoRepository comprovanteDevolucaoRepository) {
+        this.veiculoRepository = veiculoRepository;
+        this.agenciaRepository = agenciaRepository;
+        this.comprovanteAluguelRepository = comprovanteAluguelRepository;
+        this.comprovanteAluguelService = comprovanteAluguelService;
+        this.comprovanteDevolucaoService = comprovanteDevolucaoService;
+        this.comprovanteDevolucaoRepository = comprovanteDevolucaoRepository;
 
-    @Autowired
-    private ComprovanteAluguelRepository comprovanteAluguelRepository;
+    }
 
-    @Autowired
-    private ComprovanteAluguelService comprovanteAluguelService;
+    public ComprovanteAluguel alugarVeiculo(AluguelDTO aluguelDTO) {
+        agenciaRepository.findById(aluguelDTO.getIdAgencia()).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Agencia com Id " + aluguelDTO.getIdAgencia() + " não foi encontrado!"
+        ));
 
-    @Autowired
-    private ComprovanteDevolucaoService comprovanteDevolucaoService;
+        Veiculo veiculo = veiculoRepository.findById(aluguelDTO.getIdVeiculo()).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Veiculo com Id " + aluguelDTO.getIdVeiculo() + " não foi encontrado!"
+        ));
 
-    @Autowired
-    private ComprovanteDevolucaoRepository comprovanteDevolucaoRepository;
-
-    public ComprovanteAluguel alugarVeiculo(Long idAgencia, Long idVeiculo, Long idLocatario) {
-        try {
-            Optional<Veiculo> veiculoOpt = veiculoRepository.findById(idVeiculo);
-
-            if (veiculoOpt.isEmpty()) {
-                throw new IllegalArgumentException("Veículo não encontrado com o ID fornecido.");
-            }
-
-            Veiculo veiculo = veiculoOpt.get();
-
-            if (!veiculo.isVeiculoDisponivelParaLocacao()) {
-                throw new IllegalStateException("Veículo não está disponível para locação.");
-            }
-
-            veiculo.setVeiculoDisponivelParaLocacao(false);
-
-            ComprovanteAluguel comprovante = comprovanteAluguelService.criarComprovante(idAgencia, idVeiculo, idLocatario);
-
-            veiculoRepository.save(veiculo);
-            comprovanteAluguelRepository.save(comprovante);
-
-            return comprovante;
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            throw new IllegalArgumentException("Erro ao tentar alugar o veículo: " + e.getMessage(), e);
-        } catch (Exception e) {
-            throw new RuntimeException("Erro inesperado ao tentar alugar o veículo: " + e.getMessage(), e);
+        if (!veiculo.isVeiculoDisponivelParaLocacao()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Veiculo com Id " + aluguelDTO.getIdVeiculo() + " não está disponivel para locação.");
         }
+        veiculo.setVeiculoDisponivelParaLocacao(false);
+
+        ComprovanteAluguel comprovante = comprovanteAluguelService.criarComprovante(aluguelDTO.getIdAgencia(), aluguelDTO.getIdVeiculo(), aluguelDTO.getIdLocatario());
+
+        veiculoRepository.save(veiculo);
+        comprovanteAluguelRepository.save(comprovante);
+
+        return comprovante;
     }
 
     public ComprovanteDevolucao devolverVeiculo(Long idComprovante) {
