@@ -45,6 +45,7 @@ public class VeiculoService {
         if(agencia.getTamanhoMaximoDaFrota()== agencia.getVeiculos().size()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Agencia com Id " + veiculoDTO.getAgenciaId() + " já está comm capacidade maxima.");
         }
+        veiculoNovo.setAgencia(agencia);
 
         return veiculoRepository.save(veiculoNovo);
     }

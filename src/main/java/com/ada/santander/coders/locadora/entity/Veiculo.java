@@ -13,13 +13,6 @@ import lombok.Setter;
 @Table(name = "VEICULO")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Veiculo {
-
-    public static class Views {
-        public static class Public {}
-
-        public static class Internal extends Public {}
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -46,6 +39,6 @@ public class Veiculo {
 
     @ManyToOne
     @JoinColumn(name = "AGENCIA_ID")
-    //@JsonIgnore
+    @JsonIgnore
     private Agencia agencia;
 }
