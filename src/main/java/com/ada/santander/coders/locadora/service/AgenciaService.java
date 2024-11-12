@@ -2,7 +2,6 @@ package com.ada.santander.coders.locadora.service;
 
 import com.ada.santander.coders.locadora.dto.AgenciaDTO;
 import com.ada.santander.coders.locadora.entity.Agencia;
-import com.ada.santander.coders.locadora.entity.Cliente;
 import com.ada.santander.coders.locadora.entity.Endereco;
 import com.ada.santander.coders.locadora.mappers.AgenciaMapper;
 import com.ada.santander.coders.locadora.repository.AgenciaRepository;

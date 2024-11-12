@@ -1,7 +1,6 @@
 package com.ada.santander.coders.locadora.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -28,6 +27,6 @@ public class Agencia {
     @JoinColumn(name = "ENDERECO_ID", referencedColumnName = "CEP")
     private Endereco endereco;
 
-    @OneToMany(mappedBy = "agencia", cascade = CascadeType.ALL, fetch = FetchType.LAZY,orphanRemoval = true)
+    @OneToMany(mappedBy = "agencia", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Veiculo> veiculos = new ArrayList<>();
 }

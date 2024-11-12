@@ -2,7 +2,6 @@ package com.ada.santander.coders.locadora.controller;
 
 import com.ada.santander.coders.locadora.dto.AgenciaDTO;
 import com.ada.santander.coders.locadora.entity.Agencia;
-import com.ada.santander.coders.locadora.entity.Cliente;
 import com.ada.santander.coders.locadora.service.AgenciaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

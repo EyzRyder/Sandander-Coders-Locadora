@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +32,7 @@ public class VeiculoController {
     @GetMapping
     @Operation(summary = "Listar todos os veiculos", description = "Retorna uma lista de todos os veiculos")
     public ResponseEntity<Page<Veiculo>> getAllVeiculos(@RequestParam int pagina, @RequestParam int tamanho) {
-        Page<Veiculo> veiculos = veiculoService.getAllVeiculos(pagina,tamanho);
+        Page<Veiculo> veiculos = veiculoService.getAllVeiculos(pagina, tamanho);
         return new ResponseEntity<>(veiculos, HttpStatus.OK);
     }
 

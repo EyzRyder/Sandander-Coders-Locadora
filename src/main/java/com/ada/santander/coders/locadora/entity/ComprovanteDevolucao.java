@@ -6,12 +6,12 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.UUID;
+
 @Getter
 @Setter
 @Entity
 @Table(name = "COMPROVANTE_DE_DEVOLUÇÃO")
-public class ComprovanteDevolucao extends Comprovante{
+public class ComprovanteDevolucao extends Comprovante {
 
     @Column(name = "DATA_HORA_DEVOLUCAO", nullable = false)
     private LocalDateTime dataHoraDevolucao;

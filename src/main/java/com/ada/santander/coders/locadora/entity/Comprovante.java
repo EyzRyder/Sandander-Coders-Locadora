@@ -15,7 +15,8 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 public class Comprovante {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @ManyToOne
