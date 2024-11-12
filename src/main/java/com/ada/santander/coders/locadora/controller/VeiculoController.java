@@ -5,6 +5,7 @@ import com.ada.santander.coders.locadora.entity.Veiculo;
 import com.ada.santander.coders.locadora.service.VeiculoService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/veiculo")
+@Tag(name = "Veiculos", description = "API para gestão de veiculos")
 public class VeiculoController {
 
     @Autowired
@@ -24,15 +26,7 @@ public class VeiculoController {
     @PostMapping
     @Operation(summary = "Salvar um novo veiculo", description = "Salva um novo veicolo em uma agencia no sistema")
     public ResponseEntity<Veiculo> createVeiculo(@RequestBody VeiculoDTO veiculoDTO) {
-        Veiculo veiculo = new Veiculo();
-        // Mapear os campos do DTO para a entidade Veiculo
-        veiculo.setModelo(veiculoDTO.getModelo());
-        veiculo.setPlaca(veiculoDTO.getPlaca());
-        veiculo.setAno(veiculoDTO.getAno());
-        veiculo.setCor(veiculoDTO.getCor());
-        veiculo.setTipoVeiculo(veiculoDTO.getTipoVeiculo());
-        veiculo.setVeiculoDisponivelParaLocacao(veiculoDTO.isVeiculoDisponivelParaLocacao());
-        Veiculo novoVeiculo = veiculoService.createVeiculo(veiculo);
+        Veiculo novoVeiculo = veiculoService.createVeiculo(veiculoDTO);
         return new ResponseEntity<>(novoVeiculo, HttpStatus.CREATED);
     }
 
@@ -54,15 +48,7 @@ public class VeiculoController {
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar um veiculo existente", description = "Atualiza as informações de um veiculo pelo ID")
     public ResponseEntity<Veiculo> updateVeiculo(@PathVariable Long id, @RequestBody VeiculoDTO veiculoDTO) {
-        Veiculo veiculo = new Veiculo();
-        veiculo.setModelo(veiculoDTO.getModelo());
-        veiculo.setPlaca(veiculoDTO.getPlaca());
-        veiculo.setAno(veiculoDTO.getAno());
-        veiculo.setCor(veiculoDTO.getCor());
-        veiculo.setTipoVeiculo(veiculoDTO.getTipoVeiculo());
-        veiculo.setVeiculoDisponivelParaLocacao(veiculoDTO.isVeiculoDisponivelParaLocacao());
-
-        Veiculo atualizado = veiculoService.updateVeiculo(id, veiculo);
+        Veiculo atualizado = veiculoService.updateVeiculo(id, veiculoDTO);
         return new ResponseEntity<>(atualizado, HttpStatus.OK);
     }
 

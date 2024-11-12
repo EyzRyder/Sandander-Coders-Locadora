@@ -17,8 +17,16 @@ public class VeiculoService {
     @Autowired
     private VeiculoRepository veiculoRepository;
 
-    public Veiculo createVeiculo(Veiculo veiculo) {
-        return veiculoRepository.save(veiculo);
+    public Veiculo createVeiculo(VeiculoDTO veiculoDTO) {
+        Veiculo veiculoNovo = new Veiculo();
+        // Mapear os campos do DTO para a entidade Veiculo
+        veiculoNovo.setModelo(veiculoDTO.getModelo());
+        veiculoNovo.setPlaca(veiculoDTO.getPlaca());
+        veiculoNovo.setAno(veiculoDTO.getAno());
+        veiculoNovo.setCor(veiculoDTO.getCor());
+        veiculoNovo.setTipoVeiculo(veiculoDTO.getTipoVeiculo());
+        veiculoNovo.setVeiculoDisponivelParaLocacao(true);
+        return veiculoRepository.save(veiculoNovo);
     }
 
     public Page<Veiculo> getAllVeiculos(Pageable pageable) {
@@ -29,7 +37,15 @@ public class VeiculoService {
         return veiculoRepository.findById(id);
     }
 
-    public Veiculo updateVeiculo(Long id, Veiculo veiculoDetails) {
+    public Veiculo updateVeiculo(Long id, VeiculoDTO veiculoDTO) {
+        Veiculo veiculoDetails = new Veiculo();
+        veiculoDetails.setModelo(veiculoDTO.getModelo());
+        veiculoDetails.setPlaca(veiculoDTO.getPlaca());
+        veiculoDetails.setAno(veiculoDTO.getAno());
+        veiculoDetails.setCor(veiculoDTO.getCor());
+        veiculoDetails.setTipoVeiculo(veiculoDTO.getTipoVeiculo());
+        veiculoDetails.setVeiculoDisponivelParaLocacao(true);
+
         return veiculoRepository.findById(id).map(veiculo -> {
             veiculo.setModelo(veiculoDetails.getModelo());
             veiculo.setPlaca(veiculoDetails.getPlaca());
