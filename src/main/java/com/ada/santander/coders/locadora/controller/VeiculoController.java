@@ -32,8 +32,8 @@ public class VeiculoController {
 
     @GetMapping
     @Operation(summary = "Listar todos os veiculos", description = "Retorna uma lista de todos os veiculos")
-    public ResponseEntity<Page<Veiculo>> getAllVeiculos(Pageable pageable) {
-        Page<Veiculo> veiculos = veiculoService.getAllVeiculos(pageable);
+    public ResponseEntity<Page<Veiculo>> getAllVeiculos(@RequestParam int pagina, @RequestParam int tamanho) {
+        Page<Veiculo> veiculos = veiculoService.getAllVeiculos(pagina,tamanho);
         return new ResponseEntity<>(veiculos, HttpStatus.OK);
     }
 
