@@ -30,14 +30,14 @@ bash
    ````
 4. Acessar o Banco de Dados H2:
 
-   - URL: http://localhost:8080/h2-console
+   - URL: http://localhost:8081/h2-console
    - Driver Class: org.h2.Driver 
    - JDBC URL: jdbc:h2:mem:testdb 
    - Usuário: sa 
    - Senha: (em branco)
 
 ## Documentação da API
-A documentação Swagger está disponível em: http://localhost:8080/swagger-ui.html
+A documentação Swagger está disponível em: http://localhost:8081/swagger-ui.html
 
 ## Diagrama de Classe
 ```mermaid
