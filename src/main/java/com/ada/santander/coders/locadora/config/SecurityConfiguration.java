@@ -36,7 +36,7 @@ public class SecurityConfiguration {
                                 .requestMatchers(HttpMethod.GET, "/", "/docs/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/veiculo").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.POST, "/agencia").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.POST, "/user").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.POST, "/aluguel").permitAll()
                                 .requestMatchers(PathRequest.toH2Console()).permitAll()
 
                                 .anyRequest().authenticated())

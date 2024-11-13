@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/clientes")
-@Tag(name = "Cliente", description = "API para gestão de clientes")
+@Tag(name = "Cliente", description = "API para gestão de cliente. OLD VERSION")
 public class ClienteController {
 
     @Autowired

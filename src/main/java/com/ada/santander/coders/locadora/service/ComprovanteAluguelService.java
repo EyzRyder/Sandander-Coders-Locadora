@@ -1,13 +1,7 @@
 package com.ada.santander.coders.locadora.service;
 
-import com.ada.santander.coders.locadora.entity.Agencia;
-import com.ada.santander.coders.locadora.entity.Cliente;
-import com.ada.santander.coders.locadora.entity.ComprovanteAluguel;
-import com.ada.santander.coders.locadora.entity.Veiculo;
-import com.ada.santander.coders.locadora.repository.AgenciaRepository;
-import com.ada.santander.coders.locadora.repository.ClienteRepository;
-import com.ada.santander.coders.locadora.repository.ComprovanteAluguelRepository;
-import com.ada.santander.coders.locadora.repository.VeiculoRepository;
+import com.ada.santander.coders.locadora.entity.*;
+import com.ada.santander.coders.locadora.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -25,7 +19,7 @@ public class ComprovanteAluguelService {
     private VeiculoRepository veiculoRepository;
 
     @Autowired
-    private ClienteRepository locatarioRepository;
+    private UserRepository locatarioRepository;
 
     @Autowired
     private ComprovanteAluguelRepository comprovanteAluguelRepository;
@@ -34,12 +28,12 @@ public class ComprovanteAluguelService {
         try {
             Optional<Agencia> agenciaOpt = agenciaRepository.findById(idAgencia);
             Optional<Veiculo> veiculoOpt = veiculoRepository.findById(idVeiculo);
-            Optional<Cliente> locatarioOpt = locatarioRepository.findById(idLocatario);
+            Optional<User> locatarioOpt = locatarioRepository.findById(idLocatario);
 
             if (agenciaOpt.isPresent() && veiculoOpt.isPresent() && locatarioOpt.isPresent()) {
                 Agencia locadora = agenciaOpt.get();
                 Veiculo veiculo = veiculoOpt.get();
-                Cliente locatario = locatarioOpt.get();
+                User locatario = locatarioOpt.get();
 
                 if (!veiculo.getAgencia().getId().equals(locadora.getId())) {
                     throw new IllegalArgumentException("O veículo não pertence à agência informada.");
