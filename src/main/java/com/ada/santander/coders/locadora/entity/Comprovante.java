@@ -25,7 +25,7 @@ public class Comprovante {
 
     @ManyToOne
     @JoinColumn(name = "CLIENTE", nullable = false)
-    private Cliente locatario;
+    private User locatario;
 
     @ManyToOne
     @JoinColumn(name = "VEICULO")
