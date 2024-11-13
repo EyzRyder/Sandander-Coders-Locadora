@@ -25,8 +25,8 @@ Este é um projeto REST API desenvolvido em Java com Spring Boot que gerencia o 
 3. Configurar o Banco de Dados: O projeto utiliza o banco de dados H2 em memória. Nenhuma configuração adicional é necessária para ambiente de desenvolvimento.
 bash
    ````bash
-   mvn clean install
-   mvn spring-boot:run
+   .\mvnw.cmd clean install
+   .\mvnw.cmd spring-boot:run
    ````
 4. Acessar o Banco de Dados H2:
 
