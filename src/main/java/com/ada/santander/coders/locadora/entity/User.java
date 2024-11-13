@@ -33,9 +33,6 @@ public class User implements UserDetails {
     @Column(name = "EMAIL")
     private String email;
 
-    @Column(name = "TIPO")
-    private String tipo;
-
     @Column(name="LOGIN")
     private String login;
     //userName
@@ -46,10 +43,13 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    public User(String login, String password, UserRole role) {
+    public User(String login, String password, UserRole role,String nome, String cpf, String email) {
         this.login = login;
         this.password = password;
         this.role = role;
+        this.nome=nome;
+        this.cpf=cpf;
+        this.email=email;
     }
 
     @Override

@@ -19,7 +19,7 @@ public class UserService {
 
     public void saveUser(RegisterDTO registerDTO) {
         String passwordEncrypted = new BCryptPasswordEncoder().encode(registerDTO.password());
-        User user = new User(registerDTO.login(), passwordEncrypted, registerDTO.userRole());
+        User user = new User(registerDTO.login(), passwordEncrypted, registerDTO.userRole(), registerDTO.nome(), registerDTO.cpf(), registerDTO.email());
         userRepository.save(user);
     }
 }

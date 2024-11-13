@@ -1,5 +1,8 @@
 package com.ada.santander.coders.locadora.entity.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum UserRole {
     ADMIN("ADMIN"),
     USER("USER");
@@ -10,7 +13,4 @@ public enum UserRole {
         this.role = role;
     }
 
-    public String getRole() {
-        return role;
-    }
 }
