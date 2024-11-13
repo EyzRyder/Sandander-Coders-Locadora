@@ -38,3 +38,59 @@ bash
 
 ## Documentação da API
 A documentação Swagger está disponível em: http://localhost:8080/swagger-ui.html
+
+## Diagrama de Classe
+```mermaid
+classDiagram
+Agencia: id
+Agencia: tamanhoMaximoDaFrota
+
+Agencia *-- Endereco
+Agencia <-- Veiculo
+
+Endereco: cep
+Endereco: logradouro
+Endereco: bairro
+Endereco: uf
+Endereco: cidade
+Endereco: regiao
+
+Veiculo: id
+Veiculo: modelo
+Veiculo: placa
+Veiculo: ano
+Veiculo: cor
+Veiculo: tipoVeiculo
+Veiculo: veiculoDisponivelParaLocacao
+
+User: id
+User: nome
+User: cpf
+User: email
+User: login
+User: password
+User: role
+User: getAuthorities()
+User: getUsername()
+User: isAccountNonLocked()
+User: isCredentialsNonExpired()
+User: isEnabled()
+
+Comprovante: id
+Comprovante: locadora
+Comprovante: locatorio
+Comprovante: veiculo
+Comprovante: dataHorraAluguel
+
+Comprovante <|-- ComprovanteAluguel
+Comprovante <|-- ComprovanteDevolucao
+Comprovante <-- User
+Comprovante <-- Veiculo
+Comprovante <-- Agencia
+
+
+ComprovanteDevolucao: dataHoraDevolucao
+ComprovanteDevolucao: valorDaLocacao
+
+
+```
