@@ -27,13 +27,11 @@ public class AgenciaService {
     private final AgenciaRepository agenciaRepository;
     private final EnderecoRepository enderecoRepository;
     private final AgenciaMapper agenciaMapper;
-    private final WebClient webClient;
+    private final ClienteWeb webClient;
 
     private static final String CEP_REGEX = "^[0-9]{5}-?[0-9]{3}$";
 
-
-    @Autowired
-    public AgenciaService(AgenciaRepository agenciaRepository, EnderecoRepository enderecoRepository, AgenciaMapper agenciaMapper, WebClient webClient) {
+    public AgenciaService(AgenciaRepository agenciaRepository, EnderecoRepository enderecoRepository, AgenciaMapper agenciaMapper, ClienteWeb webClient) {
         this.agenciaRepository = agenciaRepository;
         this.enderecoRepository = enderecoRepository;
         this.agenciaMapper = agenciaMapper;
@@ -93,11 +91,7 @@ public class AgenciaService {
             return Mono.error(new IllegalArgumentException("Cep Inválido"));
         }
 
-        return webClient
-                .get()
-                .uri("/{cep}/json", cep)
-                .retrieve()
-                .bodyToMono(CepResponse.class);
+        return webClient.consultaCep(cep);
     }
 
     private boolean validarCep(String cep) {
@@ -111,7 +105,7 @@ public class AgenciaService {
           return cepExitente.get();
       }else{
           CepResponse cepResponse = consultaCep(cep).block();
-          Endereco cepNovo= new Endereco();
+          Endereco cepNovo = new Endereco();
           cepNovo.setCep(cepResponse.getCep());
           cepNovo.setLogradouro(cepResponse.getLogradouro());
           cepNovo.setBairro(cepResponse.getBairro());
