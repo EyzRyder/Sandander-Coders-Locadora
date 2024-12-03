@@ -1,5 +1,6 @@
 package com.ada.santander.coders.locadora.service;
 
+import com.ada.santander.coders.locadora.entity.Agencia;
 import com.ada.santander.coders.locadora.entity.Endereco;
 import com.ada.santander.coders.locadora.repository.EnderecoRepository;
 import org.springframework.data.domain.Example;
@@ -8,11 +9,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
 public class EnderecoRepositoryFakeImpl implements EnderecoRepository {
+
+    private List<Endereco> enderecos = new ArrayList<>();
+
     @Override
     public Page<Endereco> findAll(Pageable pageable) {
         return null;
@@ -105,6 +110,7 @@ public class EnderecoRepositoryFakeImpl implements EnderecoRepository {
 
     @Override
     public <S extends Endereco> S save(S entity) {
+        enderecos.add(entity);
         return entity;
     }
 

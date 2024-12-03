@@ -2,17 +2,17 @@ package com.ada.santander.coders.locadora.service;
 
 import com.ada.santander.coders.locadora.entity.Agencia;
 import com.ada.santander.coders.locadora.repository.AgenciaRepository;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.repository.query.FluentQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
 public class AgenciaRepositoryFakeImpl  implements AgenciaRepository {
+
+    private List<Agencia> agencias= new ArrayList<>();
 
     @Override
     public void flush() {
@@ -96,7 +96,7 @@ public class AgenciaRepositoryFakeImpl  implements AgenciaRepository {
 
     @Override
     public <S extends Agencia> S save(S entity) {
-
+        agencias.add(entity);
         return entity;
     }
 
@@ -162,6 +162,10 @@ public class AgenciaRepositoryFakeImpl  implements AgenciaRepository {
 
     @Override
     public Page<Agencia> findAll(Pageable pageable) {
-        return null;
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), agencias.size());
+        List<Agencia> pagedAgencias = agencias.subList(start, end);
+
+        return new PageImpl<>(pagedAgencias, pageable, agencias.size());
     }
 }
