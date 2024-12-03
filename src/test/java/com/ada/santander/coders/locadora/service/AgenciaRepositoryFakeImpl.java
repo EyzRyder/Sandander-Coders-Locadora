@@ -12,6 +12,7 @@ import java.util.function.Function;
 
 public class AgenciaRepositoryFakeImpl  implements AgenciaRepository {
 
+    private static long agenciaCount = 0;
     private List<Agencia> agencias= new ArrayList<>();
 
     @Override
@@ -96,6 +97,11 @@ public class AgenciaRepositoryFakeImpl  implements AgenciaRepository {
 
     @Override
     public <S extends Agencia> S save(S entity) {
+        if(entity.getId()==null){
+            agenciaCount++;
+            entity.setId(agenciaCount);
+        }
+
         agencias.add(entity);
         return entity;
     }
@@ -107,6 +113,11 @@ public class AgenciaRepositoryFakeImpl  implements AgenciaRepository {
 
     @Override
     public Optional<Agencia> findById(Long aLong) {
+        for(Agencia agencia:agencias){
+            if (agencia.getId().equals(aLong)){
+                return Optional.of(agencia);
+            }
+        }
         return Optional.empty();
     }
 
@@ -132,12 +143,12 @@ public class AgenciaRepositoryFakeImpl  implements AgenciaRepository {
 
     @Override
     public void deleteById(Long aLong) {
-
+        agencias.remove(aLong);
     }
 
     @Override
     public void delete(Agencia entity) {
-
+        agencias.remove(entity);
     }
 
     @Override
