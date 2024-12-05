@@ -16,16 +16,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 class AgenciaServiceTest {
 
-    private AgenciaDTO criarAgenciaDTO(int tamanho, String cep) {
+    private AgenciaDTO criarAgenciaDTO(int tamanho) {
         AgenciaDTO agenciaDTO = new AgenciaDTO();
         agenciaDTO.setTamanhoMaximoDaFrota(tamanho);
-        agenciaDTO.setCep(cep);
+        agenciaDTO.setCep("02258010");
         return agenciaDTO;
     }
 
-    private CepResponse criarEnderecoFake(String cep) {
+    private CepResponse criarEnderecoFake() {
         CepResponse endereco = new CepResponse();
-        endereco.setCep(cep);
+        endereco.setCep("02258010");
         endereco.setUf("SP");
         endereco.setBairro("Vila Constança");
         endereco.setLogradouro("Rua Bassi");
@@ -34,17 +34,20 @@ class AgenciaServiceTest {
         return endereco;
     }
 
-    @Test
-    @DisplayName("Deve registrar um agencia novo quando dados tiverem correto")
-    void criarAgencia() {
-        String cep = "02258010";
-        CepResponse enderecoFake = criarEnderecoFake(cep);
-        AgenciaService agenciaService = new AgenciaService(
+    public AgenciaService criarAgenciaService() {
+        CepResponse enderecoFake = criarEnderecoFake();
+        return new AgenciaService(
                 new AgenciaRepositoryFakeImpl(),
                 new EnderecoRepositoryFakeImpl(),
                 new AgenciaMapperImpl(),
                 new ClienteWebFakeImpl(new WebClientFakeImpl(), enderecoFake));
-        AgenciaDTO agenciaDTO = criarAgenciaDTO(10, cep);
+    }
+
+    @Test
+    @DisplayName("Deve registrar um agencia novo quando dados tiverem correto")
+    void criarAgencia() {
+        AgenciaService agenciaService = criarAgenciaService();
+        AgenciaDTO agenciaDTO = criarAgenciaDTO(10);
 
         Agencia result = agenciaService.criarAgencia(agenciaDTO);
 
@@ -60,16 +63,29 @@ class AgenciaServiceTest {
     }
 
     @Test
+    @DisplayName("Deve atualizar um agencia quando dados tiverem correto")
+    void atualizarAgencia() {
+        AgenciaService agenciaService = criarAgenciaService();
+        AgenciaDTO agenciaDTOAntigo = criarAgenciaDTO(10);
+        Agencia agenciaAntiga = agenciaService.criarAgencia(agenciaDTOAntigo);
+
+        AgenciaDTO agenciaDTONovo = criarAgenciaDTO(1);
+        Agencia result = agenciaService.atualizarAgencia(1l, agenciaDTONovo);
+
+        assertAll(
+                () -> assertNotNull(result, "A agência atualizada não deveria ser nula."),
+                () -> assertEquals(agenciaAntiga.getId(), result.getId(), "O ID da agência não deveria ser alterado."),
+                () -> assertEquals(agenciaDTONovo.getTamanhoMaximoDaFrota(), result.getTamanhoMaximoDaFrota(), "O tamanho máximo da frota não foi atualizado corretamente."),
+                () -> assertEquals(agenciaDTOAntigo.getCep(), result.getEndereco().getCep(), "O CEP não deveria ser alterado."),
+                () -> assertEquals(agenciaAntiga.getEndereco().getLogradouro(), result.getEndereco().getLogradouro(), "O logradouro não deveria ser alterado.")
+        );
+    }
+
+    @Test
     @DisplayName("Deve retornar uma pagina de agencias")
     void buscarAgenciaPaginados() {
-        String cep = "02258010";
-        CepResponse enderecoFake = criarEnderecoFake(cep);
-        AgenciaService agenciaService = new AgenciaService(
-                new AgenciaRepositoryFakeImpl(),
-                new EnderecoRepositoryFakeImpl(),
-                new AgenciaMapperImpl(),
-                new ClienteWebFakeImpl(new WebClientFakeImpl(), enderecoFake));
-        AgenciaDTO agenciaDTO = criarAgenciaDTO(10, cep);
+        AgenciaService agenciaService = criarAgenciaService();
+        AgenciaDTO agenciaDTO = criarAgenciaDTO(10);
         agenciaService.criarAgencia(agenciaDTO);
         Page<Agencia> pagina = agenciaService.buscarAgenciaPaginados(0, 1);
 
@@ -83,42 +99,12 @@ class AgenciaServiceTest {
         );
     }
 
-    @Test
-    @DisplayName("Deve atualizar um agencia quando dados tiverem correto")
-    void atualizarAgencia() {
-        String cep = "02258010";
-        CepResponse enderecoFake = criarEnderecoFake(cep);
-        AgenciaService agenciaService = new AgenciaService(
-                new AgenciaRepositoryFakeImpl(),
-                new EnderecoRepositoryFakeImpl(),
-                new AgenciaMapperImpl(),
-                new ClienteWebFakeImpl(new WebClientFakeImpl(), enderecoFake));
-        AgenciaDTO agenciaDTOAntigo = criarAgenciaDTO(10, cep);
-        Agencia agenciaAntiga = agenciaService.criarAgencia(agenciaDTOAntigo);
-
-        AgenciaDTO agenciaDTONovo = criarAgenciaDTO(1, cep);
-        Agencia result = agenciaService.atualizarAgencia(1l, agenciaDTONovo);
-
-        assertAll(
-                () -> assertNotNull(result, "A agência atualizada não deveria ser nula."),
-                () -> assertEquals(agenciaAntiga.getId(), result.getId(), "O ID da agência não deveria ser alterado."),
-                () -> assertEquals(agenciaDTONovo.getTamanhoMaximoDaFrota(), result.getTamanhoMaximoDaFrota(), "O tamanho máximo da frota não foi atualizado corretamente."),
-                () -> assertEquals(agenciaDTOAntigo.getCep(), result.getEndereco().getCep(), "O CEP não deveria ser alterado."),
-                () -> assertEquals(enderecoFake.getLogradouro(), result.getEndereco().getLogradouro(), "O logradouro não deveria ser alterado.")
-        );
-    }
 
     @Test
     @DisplayName("Deve retornar uma agencia")
     void buscarAgenciaPorId() {
-        String cep = "02258010";
-        CepResponse enderecoFake = criarEnderecoFake(cep);
-        AgenciaService agenciaService = new AgenciaService(
-                new AgenciaRepositoryFakeImpl(),
-                new EnderecoRepositoryFakeImpl(),
-                new AgenciaMapperImpl(),
-                new ClienteWebFakeImpl(new WebClientFakeImpl(), enderecoFake));
-        AgenciaDTO agenciaDTO = criarAgenciaDTO(10, cep);
+        AgenciaService agenciaService = criarAgenciaService();
+        AgenciaDTO agenciaDTO = criarAgenciaDTO(10);
 
         Agencia agenciaCriada = agenciaService.criarAgencia(agenciaDTO);
 
@@ -128,18 +114,13 @@ class AgenciaServiceTest {
                 () -> assertNotNull(result, "A agência retornada não deveria ser nula."),
                 () -> assertEquals(agenciaCriada.getId(), result.getId(), "O ID da agência retornada está incorreto."),
                 () -> assertEquals(agenciaDTO.getCep(), result.getEndereco().getCep(), "O CEP do endereço não corresponde."),
-                () -> assertEquals(agenciaDTO.getTamanhoMaximoDaFrota(), result.getTamanhoMaximoDaFrota(), "O tamanho máximo da frota não corresponde.")        );
+                () -> assertEquals(agenciaDTO.getTamanhoMaximoDaFrota(), result.getTamanhoMaximoDaFrota(), "O tamanho máximo da frota não corresponde."));
     }
 
     @Test
     @DisplayName("Deve lançar exceção ao buscar uma agência inexistente")
     void deveLancarExcecaoAoBuscarAgenciaInexistente() {
-        AgenciaService agenciaService = new AgenciaService(
-                new AgenciaRepositoryFakeImpl(),
-                new EnderecoRepositoryFakeImpl(),
-                new AgenciaMapperImpl(),
-                new ClienteWebFakeImpl(new WebClientFakeImpl(), criarEnderecoFake("02258010"))
-        );
+        AgenciaService agenciaService = criarAgenciaService();
 
         assertThrows(ResponseStatusException.class,
                 () -> agenciaService.buscarAgenciaPorId(999L),
@@ -149,14 +130,8 @@ class AgenciaServiceTest {
     @Test
     @DisplayName("Deve atualizar um agencia quando dados tiverem correto")
     void deletarAgencia() {
-        String cep = "02258010";
-        CepResponse enderecoFake = criarEnderecoFake(cep);
-        AgenciaService agenciaService = new AgenciaService(
-                new AgenciaRepositoryFakeImpl(),
-                new EnderecoRepositoryFakeImpl(),
-                new AgenciaMapperImpl(),
-                new ClienteWebFakeImpl(new WebClientFakeImpl(), enderecoFake));
-        AgenciaDTO agenciaDTO = criarAgenciaDTO(10, cep);
+        AgenciaService agenciaService = criarAgenciaService();
+        AgenciaDTO agenciaDTO = criarAgenciaDTO(10);
 
         Agencia agenciaCriada = agenciaService.criarAgencia(agenciaDTO);
         agenciaService.deletarAgencia(agenciaCriada.getId());
@@ -169,15 +144,7 @@ class AgenciaServiceTest {
     @Test
     @DisplayName("Deve lançar exceção ao tentar deletar uma agência inexistente")
     void deveLancarExcecaoAoDeletarAgenciaInexistente() {
-
-        String cep = "02258010";
-        CepResponse enderecoFake = criarEnderecoFake(cep);
-        AgenciaService agenciaService = new AgenciaService(
-                new AgenciaRepositoryFakeImpl(),
-                new EnderecoRepositoryFakeImpl(),
-                new AgenciaMapperImpl(),
-                new ClienteWebFakeImpl(new WebClientFakeImpl(), enderecoFake));
-        AgenciaDTO agenciaDTO = criarAgenciaDTO(10, cep);
+        AgenciaService agenciaService = criarAgenciaService();
 
         assertThrows(ResponseStatusException.class,
                 () -> agenciaService.deletarAgencia(999L),
