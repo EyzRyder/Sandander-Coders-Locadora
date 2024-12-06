@@ -26,8 +26,9 @@ public class ClienteSteps {
     public void queOUsuarioDesejaCadastrarUmNovoCliente() {
     }
 
+
     @Quando("ele envia os dados do cliente com nome {string}, CPF {string}, e e-mail {string}")
-    public void eleEnviaOsDadosDoClienteComNomeCPFEDEmail(String nome, String cpf, String email, String telefone) {
+    public void eleEnviaOsDadosDoClienteComNomeCPFEDEEmail(String nome, String cpf, String email, String telefone) {
         ClienteDTO clienteDTO = new ClienteDTO(nome, cpf, email, telefone);
         response = restTemplate.postForEntity("http://localhost:8080/clientes", clienteDTO, String.class);
     }
