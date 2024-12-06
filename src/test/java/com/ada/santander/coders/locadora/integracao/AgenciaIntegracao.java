@@ -11,25 +11,17 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.*;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import org.springframework.data.domain.Page;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -154,24 +146,93 @@ public class AgenciaIntegracao {
                         Agencia.class
                 );
 
-
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(getUrl("buscar"))
                 .queryParam("pagina", 0)
                 .queryParam("tamanho", 1);
-        ResponseEntity<PageImpl<Agencia>> responseEntity = restTemplate
+
+        var responseEntity = restTemplate
                 .exchange(
                         builder.toUriString(),
                         HttpMethod.GET,
                         new HttpEntity<>(headers),
-                        new ParameterizedTypeReference<PageImpl<Agencia>>() {}                );
+                        Object.class
+                );
 
 
-        Page<Agencia> agenciaPageResponse = responseEntity.getBody();
+        var agenciaPageResponse = responseEntity.getBody();
 
         assertAll(
                 () -> assertNotNull(agenciaPageResponse),
                 () -> assertEquals(HttpStatus.OK, responseEntity.getStatusCode())
+        );
+    }
+
+
+    @Test
+    @DisplayName("Deve retornar uma agencia corretamente quando os dados forem enviados")
+    void test04() {
+        ResponseEntity<Agencia> responseEntityCriaAgencia = restTemplate
+                .postForEntity(
+                        getUrl("criar-agencia"),
+                        new HttpEntity<>(criarAgenciaDTO(10), headers),
+                        Agencia.class
+                );
+
+        Agencia agenciaCriadaResponse = responseEntityCriaAgencia.getBody();
+
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(getUrl("buscar/"+agenciaCriadaResponse.getId()));
+        ResponseEntity<Agencia> responseEntity = restTemplate
+                .exchange(
+                        builder.toUriString(),
+                        HttpMethod.GET,
+                        new HttpEntity<>(headers),
+                        Agencia.class
+                );
+
+
+       Agencia agenciaResponse = responseEntity.getBody();
+
+        assertAll(
+                () -> assertNotNull(agenciaResponse),
+                () -> assertEquals(HttpStatus.OK, responseEntity.getStatusCode())
+        );
+    }
+
+
+    @Test
+    @DisplayName("Deve deletar uma agencia corretamente quando os dados forem enviados")
+    void test05() {
+        ResponseEntity<Agencia> responseEntityCriaAgencia = restTemplate
+                .postForEntity(
+                        getUrl("criar-agencia"),
+                        new HttpEntity<>(criarAgenciaDTO(10), headers),
+                        Agencia.class
+                );
+
+        Agencia agenciaCriadaResponse = responseEntityCriaAgencia.getBody();
+
+        ResponseEntity<Agencia> responseEntityDeletar = restTemplate
+                .exchange(
+                        getUrl("deletar/"+agenciaCriadaResponse.getId()),
+                        HttpMethod.DELETE,
+                        new HttpEntity<>(headers),
+                        Agencia.class
+                );
+
+
+        ResponseEntity<Agencia> responseEntity = restTemplate
+                .exchange(
+                        getUrl("buscar/"+agenciaCriadaResponse.getId()),
+                        HttpMethod.GET,
+                        new HttpEntity<>(headers),
+                        Agencia.class
+                );
+
+        assertAll(
+                () -> assertNull(responseEntity.getBody()),
+                () -> assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode())
         );
     }
 }
