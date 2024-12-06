@@ -61,15 +61,23 @@ public class ClienteController {
             @ApiResponse(responseCode = "400", description = "Erro de validação"),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
+
     @PutMapping("/{id}")
     public ResponseEntity<Cliente> atualizar(@PathVariable Long id, @RequestBody Cliente clienteAtualizado) {
         try {
             Cliente cliente = clienteService.atualizar(id, clienteAtualizado);
-            return ResponseEntity.ok(cliente);
+            if (cliente != null) {
+                return ResponseEntity.ok(cliente);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
     }
+
+
+
 
 
     @Operation(summary = "Deletar um cliente", description = "Deleta um cliente pelo ID")

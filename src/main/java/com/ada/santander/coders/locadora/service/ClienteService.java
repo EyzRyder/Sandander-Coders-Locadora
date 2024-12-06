@@ -40,20 +40,26 @@ public class ClienteService {
         return clienteRepository.save(cliente);
     }
 
+
     @Transactional
     public Cliente atualizar(Long id, Cliente clienteAtualizado) {
         return clienteRepository.findById(id)
                 .map(cliente -> {
                     LOGGER.info("Validando cliente antes de atualizar...");
                     validarCliente(clienteAtualizado);
+
                     cliente.setNome(clienteAtualizado.getNome());
                     cliente.setCpf(clienteAtualizado.getCpf());
                     cliente.setEmail(clienteAtualizado.getEmail());
                     cliente.setTelefone(clienteAtualizado.getTelefone());
-                    return clienteRepository.save(cliente);
+
+                    Cliente clienteSalvo = clienteRepository.save(cliente);
+                    LOGGER.info("Cliente atualizado com sucesso: " + clienteSalvo);
+                    return clienteSalvo;
                 })
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
     }
+
 
     @Transactional
     public void deletar(Long id) {
