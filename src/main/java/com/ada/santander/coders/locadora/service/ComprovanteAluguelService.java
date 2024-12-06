@@ -26,6 +26,7 @@ public class ComprovanteAluguelService {
 
     public ComprovanteAluguel criarComprovante(Long idAgencia, Long idVeiculo, Long idLocatario) {
         try {
+            // Recuperando a agência, o veículo e o locatário
             Optional<Agencia> agenciaOpt = agenciaRepository.findById(idAgencia);
             Optional<Veiculo> veiculoOpt = veiculoRepository.findById(idVeiculo);
             Optional<User> locatarioOpt = locatarioRepository.findById(idLocatario);
@@ -49,6 +50,7 @@ public class ComprovanteAluguelService {
 
                 return comprovante;
             } else {
+                // Caso algum objeto não tenha sido encontrado, lançar a exceção apropriada
                 throw new IllegalArgumentException("Agência, Veículo ou Locatário não encontrados com os IDs fornecidos.");
             }
         } catch (IllegalArgumentException e) {
@@ -59,4 +61,5 @@ public class ComprovanteAluguelService {
             throw new RuntimeException("Erro inesperado ao criar o comprovante de aluguel: " + e.getMessage(), e);
         }
     }
+
 }

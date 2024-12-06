@@ -35,32 +35,26 @@ public class AluguelService {
     }
 
     public ComprovanteAluguel alugarVeiculo(AluguelDTO aluguelDTO) {
-        try {
-            Veiculo veiculo = veiculoRepository.findById(aluguelDTO.getIdVeiculo()).orElseThrow(() -> new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Veiculo com Id " + aluguelDTO.getIdVeiculo() + " não foi encontrado!"
-            ));
+        Veiculo veiculo = veiculoRepository.findById(aluguelDTO.getIdVeiculo())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Veículo com Id " + aluguelDTO.getIdVeiculo() + " não foi encontrado!"));
 
-            agenciaRepository.findById(veiculo.getAgencia().getId()).orElseThrow(() -> new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Agencia com Id " + veiculo.getAgencia().getId() + " não foi encontrado!"
-            ));
+        agenciaRepository.findById(veiculo.getAgencia().getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agência com Id " + veiculo.getAgencia().getId() + " não foi encontrada!"));
 
-            if (!veiculo.isVeiculoDisponivelParaLocacao()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Veiculo com Id " + aluguelDTO.getIdVeiculo() + " não está disponivel para locação.");
-            }
-            veiculo.setVeiculoDisponivelParaLocacao(false);
-
-            ComprovanteAluguel comprovante = comprovanteAluguelService.criarComprovante(veiculo.getAgencia().getId(), aluguelDTO.getIdVeiculo(), aluguelDTO.getIdLocatario());
-
-            veiculoRepository.save(veiculo);
-            comprovanteAluguelRepository.save(comprovante);
-
-            return comprovante;
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Erro ao tentar alugar o veículo: " + e.getMessage(), e);
-        } catch (Exception e) {
-            throw new RuntimeException("Erro inesperado ao tentar alugar o veículo: " + e.getMessage(), e);
+        if (!veiculo.isVeiculoDisponivelParaLocacao()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Veículo não disponível para locação.");
         }
+
+        veiculo.setVeiculoDisponivelParaLocacao(false);
+
+        ComprovanteAluguel comprovante = comprovanteAluguelService.criarComprovante(veiculo.getAgencia().getId(), aluguelDTO.getIdVeiculo(), aluguelDTO.getIdLocatario());
+
+        veiculoRepository.save(veiculo);
+        comprovanteAluguelRepository.save(comprovante);
+
+        return comprovante;
     }
+
 
     public ComprovanteDevolucao devolverVeiculo(Long idComprovante) {
         try {
