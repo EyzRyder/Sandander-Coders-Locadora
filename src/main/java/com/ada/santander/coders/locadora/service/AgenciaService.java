@@ -7,15 +7,10 @@ import com.ada.santander.coders.locadora.mappers.AgenciaMapper;
 import com.ada.santander.coders.locadora.repository.AgenciaRepository;
 import com.ada.santander.coders.locadora.repository.EnderecoRepository;
 import com.ada.santander.coders.locadora.response.CepResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -27,13 +22,11 @@ public class AgenciaService {
     private final AgenciaRepository agenciaRepository;
     private final EnderecoRepository enderecoRepository;
     private final AgenciaMapper agenciaMapper;
-    private final WebClient webClient;
+    private final ClienteWeb webClient;
 
     private static final String CEP_REGEX = "^[0-9]{5}-?[0-9]{3}$";
 
-
-    @Autowired
-    public AgenciaService(AgenciaRepository agenciaRepository, EnderecoRepository enderecoRepository, AgenciaMapper agenciaMapper, WebClient webClient) {
+    public AgenciaService(AgenciaRepository agenciaRepository, EnderecoRepository enderecoRepository, AgenciaMapper agenciaMapper, ClienteWeb webClient) {
         this.agenciaRepository = agenciaRepository;
         this.enderecoRepository = enderecoRepository;
         this.agenciaMapper = agenciaMapper;
@@ -56,7 +49,11 @@ public class AgenciaService {
     }
 
     public Agencia atualizarAgencia(Long id, AgenciaDTO agenciaAtualizado) {
-        Agencia agenciaExistente = this.buscarAgenciaPorId(id);
+        Optional<Agencia> agenciaExistenteOpt = this.buscarAgenciaPorId(id);
+        if(agenciaExistenteOpt.isEmpty()){
+            return null;
+        }
+        Agencia agenciaExistente = agenciaExistenteOpt.get();
         Agencia agenciaNovo = new Agencia();
         agenciaNovo.setTamanhoMaximoDaFrota(agenciaAtualizado.getTamanhoMaximoDaFrota());
 
@@ -69,22 +66,17 @@ public class AgenciaService {
     }
 
     public Agencia deletarAgencia(Long id) {
-        Agencia agenciaExistente = this.buscarAgenciaPorId(id);
+        Optional<Agencia> agenciaExistenteOpt = this.buscarAgenciaPorId(id);
+        if(agenciaExistenteOpt.isEmpty()){
+            return null;
+        }
+        Agencia agenciaExistente =agenciaExistenteOpt.get();
         agenciaRepository.delete(agenciaExistente);
         return agenciaExistente;
     }
 
-    @Transactional
-    public Agencia buscarAgenciaPorId(Long id) {
-        return agenciaRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Agencia com Id " + id
-                ));
-    }
-
-    private boolean verificarAgenciaExistente(Long id) {
-        Optional<Agencia> agenciaExistente = agenciaRepository.findById(id);
-        return agenciaExistente.isPresent();
+    public Optional<Agencia> buscarAgenciaPorId(Long id) {
+        return agenciaRepository.findById(id);
     }
 
     private Mono<CepResponse> consultaCep(String cep) {
@@ -93,32 +85,29 @@ public class AgenciaService {
             return Mono.error(new IllegalArgumentException("Cep Inválido"));
         }
 
-        return webClient
-                .get()
-                .uri("/{cep}/json", cep)
-                .retrieve()
-                .bodyToMono(CepResponse.class);
+        return webClient.consultaCep(cep);
     }
 
     private boolean validarCep(String cep) {
         return cep != null && cep.matches(CEP_REGEX);
     }
 
-  private Endereco getEnderecoByCep (String cep){
+    private Endereco getEnderecoByCep(String cep) {
 
-      Optional<Endereco> cepExitente = enderecoRepository.findById(cep);
-      if(cepExitente.isPresent()){
-          return cepExitente.get();
-      }else{
-          CepResponse cepResponse = consultaCep(cep).block();
-          Endereco cepNovo= new Endereco();
-          cepNovo.setCep(cepResponse.getCep());
-          cepNovo.setLogradouro(cepResponse.getLogradouro());
-          cepNovo.setBairro(cepResponse.getBairro());
-          cepNovo.setUf(cepResponse.getUf());
-          cepNovo.setCidade(cepResponse.getLocalidade());
-          cepNovo.setRegiao(cepResponse.getRegiao());
-          return enderecoRepository.save(cepNovo);
-      }
-  }
+        Optional<Endereco> cepExitente = enderecoRepository.findById(cep);
+        if (cepExitente.isPresent()) {
+            return cepExitente.get();
+        } else {
+            CepResponse cepResponse = consultaCep(cep).block();
+            Endereco cepNovo = new Endereco();
+            cepNovo.setCep(cepResponse.getCep());
+            cepNovo.setLogradouro(cepResponse.getLogradouro());
+            cepNovo.setBairro(cepResponse.getBairro());
+            cepNovo.setUf(cepResponse.getUf());
+            cepNovo.setCidade(cepResponse.getLocalidade());
+            cepNovo.setRegiao(cepResponse.getRegiao());
+            return enderecoRepository.save(cepNovo);
+        }
+    }
+
 }

@@ -13,13 +13,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/agencia")
 @Tag(name = "Agencia", description = "API para gestão de agencias")
 public class AgenciaController {
 
-    @Autowired
     private AgenciaService agenciaService;
+
+    public AgenciaController(AgenciaService agenciaService) {
+        this.agenciaService = agenciaService;
+    }
 
     @PostMapping("/criar-agencia")
     @Operation(summary = "Salvar um novo Agencia")
@@ -63,7 +68,8 @@ public class AgenciaController {
     })
     @GetMapping("/buscar/{id}")
     public ResponseEntity<Agencia> buscarAgenciaPorId(@PathVariable Long id){
-        return ResponseEntity.ok(agenciaService.buscarAgenciaPorId(id));
+        Optional<Agencia> agencia= agenciaService.buscarAgenciaPorId(id);
+        return agencia.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/deletar/{id}")
