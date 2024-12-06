@@ -20,23 +20,23 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-
 public class AgenciaControllerTest {
-
     @InjectMocks
     private AgenciaController agenciaController;
 
+    @Autowired
     private MockMvc mockMvc;
 
     @Mock
@@ -46,7 +46,6 @@ public class AgenciaControllerTest {
     @Mock
     private AgenciaMapper agenciaMapper;
 
-    @Mock
     private AgenciaService agenciaService;
 
     public AgenciaService criarAgenciaService() {
@@ -85,6 +84,8 @@ public class AgenciaControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        agenciaService = criarAgenciaService();
+        agenciaController = new AgenciaController(agenciaService);
         mockMvc = MockMvcBuilders.standaloneSetup(agenciaController).build();
     }
 
@@ -143,13 +144,21 @@ public class AgenciaControllerTest {
     @Test
     @DisplayName("Deve retornar uma agencia")
     void agenciaPorId() throws Exception {
-
         AgenciaDTO agenciaDTO = new AgenciaDTO();
         agenciaDTO.setTamanhoMaximoDaFrota(10);
         agenciaDTO.setCep("02258010");
 
-        agenciaService.criarAgencia(agenciaDTO);
+        JSONObject agenciaJson = new JSONObject(agenciaDTO.toString());
 
+        Agencia agencia = criarAgenciaFake(1L, 10);
+        Mockito.when(agenciaRepository.save(Mockito.any(Agencia.class))).thenReturn(agencia);
+        mockMvc.perform(post("/agencia/criar-agencia")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(agenciaJson.toString())
+        ).andExpect(status().isCreated());
+
+        Mockito.when(agenciaService.buscarAgenciaPorId(1L)).thenReturn(Optional.of(agencia));
+        Mockito.when(agenciaRepository.findById(1L)).thenReturn(Optional.of(agencia));
         mockMvc.perform(get("/agencia/buscar/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -163,9 +172,20 @@ public class AgenciaControllerTest {
         agenciaDTO.setTamanhoMaximoDaFrota(10);
         agenciaDTO.setCep("02258010");
 
-        //Mockito.doReturn(criarAgenciaFake(1l,10)).when(agenciaRepository).save(Mockito.any(Agencia.class));
-        Mockito.doReturn(criarAgenciaFake(1l,10)).when(agenciaService).criarAgencia(agenciaDTO);
-        Agencia agencia = agenciaService.criarAgencia(agenciaDTO);
+        JSONObject agenciaJson = new JSONObject(agenciaDTO.toString());
+
+        Agencia agencia = criarAgenciaFake(1L, 10);
+
+        Mockito.when(agenciaRepository.save(Mockito.any(Agencia.class))).thenReturn(agencia);
+
+        mockMvc.perform(post("/agencia/criar-agencia")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(agenciaJson.toString())
+        ).andExpect(status().isCreated());
+
+
+        Mockito.doNothing().when(agenciaRepository).delete(agencia);
+        Mockito.when(agenciaRepository.findById(agencia.getId())).thenReturn(Optional.of(agencia));
 
         mockMvc.perform(delete("/agencia/deletar/{id}", agencia.getId())
                         .contentType(MediaType.APPLICATION_JSON)

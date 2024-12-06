@@ -18,7 +18,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -179,7 +178,7 @@ class AgenciaServiceMockTest {
         Agencia agenciaCriada = agenciaService.criarAgencia(agenciaDTO);
 
         Mockito.doReturn(Optional.of(agenciaEsperado)).when(agenciaRepository).findById(agenciaCriada.getId());
-        Agencia result = agenciaService.buscarAgenciaPorId(agenciaCriada.getId());
+        Agencia result = agenciaService.buscarAgenciaPorId(agenciaCriada.getId()).get();
 
         assertAll(
                 () -> assertNotNull(result, "A agência retornada não deveria ser nula."),
@@ -194,10 +193,10 @@ class AgenciaServiceMockTest {
     void deveLancarExcecaoAoBuscarAgenciaInexistente() {
         AgenciaService agenciaService = criarAgenciaService();
 
-        Mockito.doThrow(ResponseStatusException.class).when(agenciaRepository).findById(999L);
-        assertThrows(ResponseStatusException.class,
-                () -> agenciaService.buscarAgenciaPorId(999L),
-                "Deveria lançar exceção ao buscar uma agência inexistente.");
+        Mockito.doReturn(Optional.empty()).when(agenciaRepository).findById(999L);
+
+        assertFalse(agenciaService.buscarAgenciaPorId(999L).isPresent(),
+                "Deveria lançar exceção ao buscar uma agência que não existe.");
     }
 
 
@@ -215,9 +214,9 @@ class AgenciaServiceMockTest {
         Mockito.doReturn(Optional.of(agenciaEsperado)).when(agenciaRepository).findById(agenciaCriada.getId());
         agenciaService.deletarAgencia(agenciaCriada.getId());
 
-        Mockito.doThrow(ResponseStatusException.class).when(agenciaRepository).findById(agenciaCriada.getId());
-        assertThrows(ResponseStatusException.class,
-                () -> agenciaService.buscarAgenciaPorId(agenciaCriada.getId()),
+        Mockito.doReturn(Optional.empty()).when(agenciaRepository).findById(999L);
+
+        assertFalse(agenciaService.buscarAgenciaPorId(999L).isPresent(),
                 "Deveria lançar exceção ao buscar uma agência deletada.");
     }
 
@@ -227,9 +226,9 @@ class AgenciaServiceMockTest {
     void deveLancarExcecaoAoDeletarAgenciaInexistente() {
         AgenciaService agenciaService = criarAgenciaService();
 
-        Mockito.doThrow(ResponseStatusException.class).when(agenciaRepository).findById(999L);
-        assertThrows(ResponseStatusException.class,
-                () -> agenciaService.deletarAgencia(999L),
-                "Deveria lançar exceção ao tentar deletar uma agência inexistente.");
+        Mockito.doReturn(Optional.empty()).when(agenciaRepository).findById(999L);
+
+        assertFalse(agenciaService.buscarAgenciaPorId(999L).isPresent(),
+                "Deveria lançar exceção ao buscar uma agência inexistente.");
     }
 }

@@ -108,7 +108,7 @@ class AgenciaServiceTest {
 
         Agencia agenciaCriada = agenciaService.criarAgencia(agenciaDTO);
 
-        Agencia result = agenciaService.buscarAgenciaPorId(agenciaCriada.getId());
+        Agencia result = agenciaService.buscarAgenciaPorId(agenciaCriada.getId()).get();
 
         assertAll(
                 () -> assertNotNull(result, "A agência retornada não deveria ser nula."),
@@ -122,9 +122,8 @@ class AgenciaServiceTest {
     void deveLancarExcecaoAoBuscarAgenciaInexistente() {
         AgenciaService agenciaService = criarAgenciaService();
 
-        assertThrows(ResponseStatusException.class,
-                () -> agenciaService.buscarAgenciaPorId(999L),
-                "Deveria lançar exceção ao buscar uma agência inexistente.");
+        assertFalse(agenciaService.buscarAgenciaPorId(999L).isPresent(),
+                "Deveria lançar exceção ao buscar uma agência deletada.");
     }
 
     @Test
@@ -136,8 +135,7 @@ class AgenciaServiceTest {
         Agencia agenciaCriada = agenciaService.criarAgencia(agenciaDTO);
         agenciaService.deletarAgencia(agenciaCriada.getId());
 
-        assertThrows(ResponseStatusException.class,
-                () -> agenciaService.buscarAgenciaPorId(agenciaCriada.getId()),
+        assertFalse(agenciaService.buscarAgenciaPorId(agenciaCriada.getId()).isPresent(),
                 "Deveria lançar exceção ao buscar uma agência deletada.");
     }
 
@@ -146,8 +144,7 @@ class AgenciaServiceTest {
     void deveLancarExcecaoAoDeletarAgenciaInexistente() {
         AgenciaService agenciaService = criarAgenciaService();
 
-        assertThrows(ResponseStatusException.class,
-                () -> agenciaService.deletarAgencia(999L),
-                "Deveria lançar exceção ao tentar deletar uma agência inexistente.");
+        assertFalse(agenciaService.buscarAgenciaPorId(999L).isPresent(),
+                "Deveria lançar exceção ao buscar uma agência deletada.");
     }
 }
