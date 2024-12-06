@@ -17,4 +17,13 @@ public class AgenciaDTO {
 
     @NotBlank(message = "O nome é obrigatório")
     private String cep;
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("{");
+        sb.append("tamanhoMaximoDaFrota=").append(tamanhoMaximoDaFrota);
+        sb.append(", cep='").append(cep).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
 }

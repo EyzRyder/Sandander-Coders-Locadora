@@ -2,19 +2,42 @@ package com.ada.santander.coders.locadora.service;
 
 import com.ada.santander.coders.locadora.dto.AgenciaDTO;
 import com.ada.santander.coders.locadora.entity.Agencia;
-import com.ada.santander.coders.locadora.mappers.AgenciaMapperImpl;
+import com.ada.santander.coders.locadora.entity.Endereco;
+import com.ada.santander.coders.locadora.mappers.AgenciaMapper;
+import com.ada.santander.coders.locadora.repository.AgenciaRepository;
+import com.ada.santander.coders.locadora.repository.EnderecoRepository;
 import com.ada.santander.coders.locadora.response.CepResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-class AgenciaServiceTest {
+class AgenciaServiceMockTest {
+
+    @InjectMocks
+    private AgenciaService agenciaService;
+
+    @Mock
+    private AgenciaRepository agenciaRepository;
+    @Mock
+    private EnderecoRepository enderecoRepository;
+    @Mock
+    private AgenciaMapper agenciaMapper;
+
 
     private AgenciaDTO criarAgenciaDTO(int tamanho) {
         AgenciaDTO agenciaDTO = new AgenciaDTO();
@@ -23,7 +46,7 @@ class AgenciaServiceTest {
         return agenciaDTO;
     }
 
-    private CepResponse criarEnderecoFake() {
+    private CepResponse criarCepResponseFake() {
         CepResponse endereco = new CepResponse();
         endereco.setCep("02258010");
         endereco.setUf("SP");
@@ -34,12 +57,32 @@ class AgenciaServiceTest {
         return endereco;
     }
 
-    public AgenciaService criarAgenciaService() {
-        CepResponse enderecoFake = criarEnderecoFake();
+    public Endereco criarEnderecoFake(){
+        Endereco endereco = new Endereco();
+        endereco.setCep("02258010");
+        endereco.setUf("SP");
+        endereco.setBairro("Vila Constança");
+        endereco.setLogradouro("Rua Bassi");
+        endereco.setRegiao("Sudeste");
+        endereco.setCidade("São Paulo");
+        return endereco;
+    }
+
+    public Agencia criarAgenciaFake(Long id, int tamanho, Endereco endereco){
+        Agencia agenciaNovo = new Agencia();
+        agenciaNovo.setId(id);
+        agenciaNovo.setTamanhoMaximoDaFrota(tamanho);
+        agenciaNovo.setVeiculos(new ArrayList<>());
+        agenciaNovo.setEndereco(endereco);
+        return agenciaNovo;
+    }
+
+    public AgenciaService criarAgenciaService(){
+        CepResponse enderecoFake = criarCepResponseFake();
         return new AgenciaService(
-                new AgenciaRepositoryFakeImpl(),
-                new EnderecoRepositoryFakeImpl(),
-                new AgenciaMapperImpl(),
+                agenciaRepository,
+                enderecoRepository,
+                agenciaMapper,
                 new ClienteWebFakeImpl(new WebClientFakeImpl(), enderecoFake));
     }
 
@@ -48,6 +91,10 @@ class AgenciaServiceTest {
     void criarAgencia() {
         AgenciaService agenciaService = criarAgenciaService();
         AgenciaDTO agenciaDTO = criarAgenciaDTO(10);
+        Agencia agenciaNovo = criarAgenciaFake(1l,agenciaDTO.getTamanhoMaximoDaFrota(),criarEnderecoFake());
+
+        //Mockito.when(agenciaRepository.save(Mockito.any())).thenReturn(agenciaNovo);
+        Mockito.doReturn(agenciaNovo).when(agenciaRepository).save(Mockito.any());
 
         Agencia result = agenciaService.criarAgencia(agenciaDTO);
 
@@ -59,17 +106,26 @@ class AgenciaServiceTest {
                 () -> assertEquals("Vila Constança", result.getEndereco().getBairro(), "O bairro não corresponde."),
                 () -> assertNotNull(result.getId(), "O ID da agência deveria ter sido gerado.")
         );
-
     }
+
 
     @Test
     @DisplayName("Deve atualizar um agencia quando dados tiverem correto")
     void atualizarAgencia() {
         AgenciaService agenciaService = criarAgenciaService();
+
         AgenciaDTO agenciaDTOAntigo = criarAgenciaDTO(10);
+        Agencia agenciaAntigoEsperado =criarAgenciaFake(1l,agenciaDTOAntigo.getTamanhoMaximoDaFrota(),criarEnderecoFake());
+
+        Mockito.doReturn(agenciaAntigoEsperado).when(agenciaRepository).save(Mockito.any());
         Agencia agenciaAntiga = agenciaService.criarAgencia(agenciaDTOAntigo);
 
+
         AgenciaDTO agenciaDTONovo = criarAgenciaDTO(1);
+        Agencia agenciaNovoEsperado =criarAgenciaFake(1l,agenciaDTONovo.getTamanhoMaximoDaFrota(),criarEnderecoFake());
+
+        Mockito.doReturn(agenciaNovoEsperado).when(agenciaRepository).save(Mockito.any());
+        Mockito.doReturn(Optional.of(agenciaAntiga)).when(agenciaRepository).findById(1l);
         Agencia result = agenciaService.atualizarAgencia(1l, agenciaDTONovo);
 
         assertAll(
@@ -81,12 +137,23 @@ class AgenciaServiceTest {
         );
     }
 
+
     @Test
     @DisplayName("Deve retornar uma pagina de agencias")
     void buscarAgenciaPaginados() {
         AgenciaService agenciaService = criarAgenciaService();
         AgenciaDTO agenciaDTO = criarAgenciaDTO(10);
+        Agencia agenciaEsperado = criarAgenciaFake(1l,agenciaDTO.getTamanhoMaximoDaFrota(),criarEnderecoFake());
+
+        Mockito.doReturn(agenciaEsperado).when(agenciaRepository).save(Mockito.any());
         agenciaService.criarAgencia(agenciaDTO);
+
+        Pageable pageable = PageRequest.of(0, 1);
+        List<Agencia> pagedAgencias = new ArrayList<>();
+        pagedAgencias.add(agenciaEsperado);
+
+        Page<Agencia> page =  new PageImpl<>(pagedAgencias, pageable, 1);
+        Mockito.doReturn(page).when(agenciaRepository).findAll(pageable);
         Page<Agencia> pagina = agenciaService.buscarAgenciaPaginados(0, 1);
 
         assertAll(
@@ -105,9 +172,12 @@ class AgenciaServiceTest {
     void buscarAgenciaPorId() {
         AgenciaService agenciaService = criarAgenciaService();
         AgenciaDTO agenciaDTO = criarAgenciaDTO(10);
+        Agencia agenciaEsperado = criarAgenciaFake(1l,agenciaDTO.getTamanhoMaximoDaFrota(),criarEnderecoFake());
 
+        Mockito.doReturn(agenciaEsperado).when(agenciaRepository).save(Mockito.any());
         Agencia agenciaCriada = agenciaService.criarAgencia(agenciaDTO);
 
+        Mockito.doReturn(Optional.of(agenciaEsperado)).when(agenciaRepository).findById(agenciaCriada.getId());
         Agencia result = agenciaService.buscarAgenciaPorId(agenciaCriada.getId()).get();
 
         assertAll(
@@ -117,34 +187,48 @@ class AgenciaServiceTest {
                 () -> assertEquals(agenciaDTO.getTamanhoMaximoDaFrota(), result.getTamanhoMaximoDaFrota(), "O tamanho máximo da frota não corresponde."));
     }
 
+
     @Test
     @DisplayName("Deve lançar exceção ao buscar uma agência inexistente")
     void deveLancarExcecaoAoBuscarAgenciaInexistente() {
         AgenciaService agenciaService = criarAgenciaService();
 
+        Mockito.doReturn(Optional.empty()).when(agenciaRepository).findById(999L);
+
         assertFalse(agenciaService.buscarAgenciaPorId(999L).isPresent(),
-                "Deveria lançar exceção ao buscar uma agência deletada.");
+                "Deveria lançar exceção ao buscar uma agência que não existe.");
     }
+
 
     @Test
     @DisplayName("Deve atualizar um agencia quando dados tiverem correto")
     void deletarAgencia() {
         AgenciaService agenciaService = criarAgenciaService();
         AgenciaDTO agenciaDTO = criarAgenciaDTO(10);
+        Agencia agenciaEsperado = criarAgenciaFake(1l,agenciaDTO.getTamanhoMaximoDaFrota(),criarEnderecoFake());
 
+        Mockito.doReturn(agenciaEsperado).when(agenciaRepository).save(Mockito.any());
         Agencia agenciaCriada = agenciaService.criarAgencia(agenciaDTO);
+
+
+        Mockito.doReturn(Optional.of(agenciaEsperado)).when(agenciaRepository).findById(agenciaCriada.getId());
         agenciaService.deletarAgencia(agenciaCriada.getId());
 
-        assertFalse(agenciaService.buscarAgenciaPorId(agenciaCriada.getId()).isPresent(),
+        Mockito.doReturn(Optional.empty()).when(agenciaRepository).findById(999L);
+
+        assertFalse(agenciaService.buscarAgenciaPorId(999L).isPresent(),
                 "Deveria lançar exceção ao buscar uma agência deletada.");
     }
+
 
     @Test
     @DisplayName("Deve lançar exceção ao tentar deletar uma agência inexistente")
     void deveLancarExcecaoAoDeletarAgenciaInexistente() {
         AgenciaService agenciaService = criarAgenciaService();
 
+        Mockito.doReturn(Optional.empty()).when(agenciaRepository).findById(999L);
+
         assertFalse(agenciaService.buscarAgenciaPorId(999L).isPresent(),
-                "Deveria lançar exceção ao buscar uma agência deletada.");
+                "Deveria lançar exceção ao buscar uma agência inexistente.");
     }
 }
