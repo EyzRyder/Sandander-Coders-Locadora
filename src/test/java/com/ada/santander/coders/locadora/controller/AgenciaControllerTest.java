@@ -2,6 +2,7 @@ package com.ada.santander.coders.locadora.controller;
 
 import com.ada.santander.coders.locadora.dto.AgenciaDTO;
 import com.ada.santander.coders.locadora.entity.Agencia;
+import com.ada.santander.coders.locadora.entity.Endereco;
 import com.ada.santander.coders.locadora.mappers.AgenciaMapper;
 import com.ada.santander.coders.locadora.repository.AgenciaRepository;
 import com.ada.santander.coders.locadora.repository.EnderecoRepository;
@@ -17,12 +18,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import java.util.ArrayList;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,6 +46,8 @@ public class AgenciaControllerTest {
     @Mock
     private AgenciaMapper agenciaMapper;
 
+    @Mock
+    private AgenciaService agenciaService;
 
     public AgenciaService criarAgenciaService() {
         CepResponse enderecoFake = new CepResponse();
@@ -57,8 +64,27 @@ public class AgenciaControllerTest {
                 new ClienteWebFakeImpl(new WebClientFakeImpl(), enderecoFake));
     }
 
+
+    public Agencia criarAgenciaFake(Long id, int tamanho) {
+        Agencia agenciaNovo = new Agencia();
+        agenciaNovo.setId(id);
+        agenciaNovo.setTamanhoMaximoDaFrota(tamanho);
+        agenciaNovo.setVeiculos(new ArrayList<>());
+
+        Endereco endereco = new Endereco();
+        endereco.setCep("02258010");
+        endereco.setUf("SP");
+        endereco.setBairro("Vila Constança");
+        endereco.setLogradouro("Rua Bassi");
+        endereco.setRegiao("Sudeste");
+        endereco.setCidade("São Paulo");
+        agenciaNovo.setEndereco(endereco);
+        return agenciaNovo;
+    }
+
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(agenciaController).build();
     }
 
@@ -68,14 +94,83 @@ public class AgenciaControllerTest {
         AgenciaDTO agenciaDTO = new AgenciaDTO();
         agenciaDTO.setTamanhoMaximoDaFrota(10);
         agenciaDTO.setCep("02258010");
-        AgenciaService agenciaService = criarAgenciaService();
-
-        Mockito.when(agenciaService.criarAgencia(Mockito.any())).thenReturn(Mockito.any(Agencia.class));
 
         JSONObject agenciaJson = new JSONObject(agenciaDTO.toString());
-        mockMvc.perform(post("/agencia")
+
+        mockMvc.perform(post("/agencia/criar-agencia")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(agenciaJson.toString()))
+                        .content(agenciaJson.toString())
+                )
+                .andExpect(status().isCreated());
+    }
+
+
+    @Test
+    @DisplayName("Atualizar agencia quando passar dados corretamente")
+    void agenciaAtualizar() throws Exception {
+        AgenciaDTO agenciaDTO = new AgenciaDTO();
+        agenciaDTO.setTamanhoMaximoDaFrota(1);
+        agenciaDTO.setCep("02258010");
+        AgenciaDTO agenciaDTOAtualizado = new AgenciaDTO();
+        agenciaDTOAtualizado.setTamanhoMaximoDaFrota(10);
+        agenciaDTOAtualizado.setCep("02258010");
+
+        agenciaService.criarAgencia(agenciaDTO);
+
+        JSONObject agenciaJson = new JSONObject(agenciaDTOAtualizado.toString());
+
+        mockMvc.perform(put("/agencia/atualiza-agencia/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(agenciaJson.toString())
+                )
                 .andExpect(status().isOk());
+    }
+
+
+    @Test
+    @DisplayName("Deve retornar uma pagina de agencias")
+    void agenciaPaginar() throws Exception {
+
+        mockMvc.perform(get("/agencia/buscar")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("pagina", "0")
+                        .param("tamanho", "1")
+                )
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
+    @DisplayName("Deve retornar uma agencia")
+    void agenciaPorId() throws Exception {
+
+        AgenciaDTO agenciaDTO = new AgenciaDTO();
+        agenciaDTO.setTamanhoMaximoDaFrota(10);
+        agenciaDTO.setCep("02258010");
+
+        agenciaService.criarAgencia(agenciaDTO);
+
+        mockMvc.perform(get("/agencia/buscar/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("deletar agencia quando passar dados corretamente")
+    void agenciaDeletar() throws Exception {
+        AgenciaDTO agenciaDTO = new AgenciaDTO();
+        agenciaDTO.setTamanhoMaximoDaFrota(10);
+        agenciaDTO.setCep("02258010");
+
+        //Mockito.doReturn(criarAgenciaFake(1l,10)).when(agenciaRepository).save(Mockito.any(Agencia.class));
+        Mockito.doReturn(criarAgenciaFake(1l,10)).when(agenciaService).criarAgencia(agenciaDTO);
+        Agencia agencia = agenciaService.criarAgencia(agenciaDTO);
+
+        mockMvc.perform(delete("/agencia/deletar/{id}", agencia.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk());
+
     }
 }
