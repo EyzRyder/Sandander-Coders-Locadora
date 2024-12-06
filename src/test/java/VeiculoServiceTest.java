@@ -1,6 +1,7 @@
 import com.ada.santander.coders.locadora.dto.VeiculoDTO;
 import com.ada.santander.coders.locadora.entity.Agencia;
 import com.ada.santander.coders.locadora.entity.Veiculo;
+import com.ada.santander.coders.locadora.entity.enums.TipoVeiculo;
 import com.ada.santander.coders.locadora.repository.AgenciaRepository;
 import com.ada.santander.coders.locadora.repository.VeiculoRepository;
 import com.ada.santander.coders.locadora.service.VeiculoService;
