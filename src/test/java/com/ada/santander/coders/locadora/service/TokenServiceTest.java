@@ -3,6 +3,7 @@ package com.ada.santander.coders.locadora.service;
 import com.ada.santander.coders.locadora.entity.User;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -38,6 +39,7 @@ class TokenServiceTest {
         when(user.getLogin()).thenReturn("test_user");
 
         String token = tokenService.generateToken(user);
+
         assertNotNull(token);
         assertFalse(token.isEmpty());
     }
@@ -59,20 +61,14 @@ class TokenServiceTest {
         assertThrows(RuntimeException.class, () -> tokenService.validateToken(invalidToken));
     }
 
-
-
-
     @Test
     void testValidateTokenWithExpiredToken() {
         TokenService tokenServiceExpired = new TokenService();
         tokenServiceExpired.secret = secret;
 
-
         Instant expiredInstant = LocalDateTime.now().minusSeconds(5).toInstant(ZoneOffset.of("-03:00"));
 
-
         when(user.getLogin()).thenReturn("test_user");
-
 
         String expiredToken = JWT.create()
                 .withIssuer("ada-store")
@@ -80,9 +76,6 @@ class TokenServiceTest {
                 .withExpiresAt(expiredInstant)
                 .sign(Algorithm.HMAC256(secret));
 
-
         assertThrows(RuntimeException.class, () -> tokenServiceExpired.validateToken(expiredToken));
     }
-
-
 }
