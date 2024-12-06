@@ -12,7 +12,7 @@ import java.util.function.Function;
 
 public class AgenciaRepositoryFakeImpl  implements AgenciaRepository {
 
-    private static long agenciaCount = 0;
+    private long agenciaCount = 0;
     private List<Agencia> agencias= new ArrayList<>();
 
     @Override
