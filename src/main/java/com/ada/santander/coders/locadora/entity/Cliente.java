@@ -23,5 +23,9 @@ public class Cliente {
     private String email;
     private String telefone;
 
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }
 

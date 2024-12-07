@@ -1,5 +1,6 @@
 package com.ada.santander.coders.locadora.service;
 
+import com.ada.santander.coders.locadora.dto.ClienteDTO;
 import com.ada.santander.coders.locadora.entity.Cliente;
 import com.ada.santander.coders.locadora.repository.ClienteRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,12 +68,13 @@ class ClienteServiceTest {
     @Test
     void testAtualizarCliente() {
         Cliente cliente = new Cliente(1L, "João Silva", "12345678901", "joao@gmail.com", "999999999");
+        ClienteDTO clienteAtualizadoDTO = new ClienteDTO( "João Atualizado", "12345678901", "joao@gmail.com", "999999999");
         Cliente clienteAtualizado = new Cliente(1L, "João Atualizado", "12345678901", "joao@gmail.com", "999999999");
 
         when(clienteRepository.findById(1L)).thenReturn(Optional.of(cliente));
         when(clienteRepository.save(any(Cliente.class))).thenReturn(clienteAtualizado);
 
-        Cliente updatedCliente = clienteService.atualizar(1L, clienteAtualizado);
+        Cliente updatedCliente = clienteService.atualizar(1L, clienteAtualizadoDTO);
         assertNotNull(updatedCliente);
         assertEquals("João Atualizado", updatedCliente.getNome());
     }

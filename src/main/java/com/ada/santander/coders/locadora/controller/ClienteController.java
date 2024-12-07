@@ -1,5 +1,6 @@
 package com.ada.santander.coders.locadora.controller;
 
+import com.ada.santander.coders.locadora.dto.ClienteDTO;
 import com.ada.santander.coders.locadora.entity.Cliente;
 import com.ada.santander.coders.locadora.service.ClienteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -63,7 +64,7 @@ public class ClienteController {
     })
 
     @PutMapping("/{id}")
-    public ResponseEntity<Cliente> atualizar(@PathVariable Long id, @RequestBody Cliente clienteAtualizado) {
+    public ResponseEntity<Cliente> atualizar(@PathVariable Long id, @RequestBody ClienteDTO clienteAtualizado) {
         try {
             Cliente cliente = clienteService.atualizar(id, clienteAtualizado);
             if (cliente != null) {

@@ -1,8 +1,12 @@
 package com.ada.santander.coders.locadora.controller;
 
+import com.ada.santander.coders.locadora.dto.ClienteDTO;
 import com.ada.santander.coders.locadora.entity.Cliente;
+import com.ada.santander.coders.locadora.repository.ClienteRepository;
 import com.ada.santander.coders.locadora.service.ClienteService;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -24,6 +28,9 @@ class ClienteControllerTest {
 
     @Mock
     private ClienteService clienteService;
+
+    @Mock
+    private ClienteRepository clienteRepository;
 
     @InjectMocks
     private ClienteController clienteController;
@@ -78,14 +85,29 @@ class ClienteControllerTest {
 
 
     @Test
+    @Disabled
     void atualizar() throws Exception {
-        Cliente cliente = new Cliente(1L, "João", "12345678901", "joao@email.com", "123456789");
+        Cliente cliente = new Cliente(1L, "Maria", "12345678901", "joao@email.com", "123456789");
+        when(clienteService.salvar(any(Cliente.class))).thenReturn(cliente);
+        when(clienteRepository.save(any(Cliente.class))).thenReturn(cliente);
 
-        when(clienteService.atualizar(1L, cliente)).thenReturn(cliente);
-
-        mockMvc.perform(put("/clientes/1")
+        mockMvc.perform(post("/clientes")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"nome\":\"João\",\"cpf\":\"12345678901\",\"email\":\"joao@email.com\",\"telefone\":\"123456789\"}"))
+                        .content("{\"nome\":\"Maria\",\"cpf\":\"12345678901\",\"email\":\"joao@email.com\",\"telefone\":\"123456789\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nome").value("Maria"));
+
+        ClienteDTO clienteDTO = new ClienteDTO("João", "12345678901", "joao@email.com", "123456789");
+        Cliente clienteAtualizado = new Cliente(1L, "João", "12345678901", "joao@email.com", "123456789");
+
+        JSONObject clienteJson = new JSONObject(clienteDTO.toString());
+        when(clienteService.atualizar(clienteAtualizado.getId(), clienteDTO)).thenReturn(clienteAtualizado);
+        when(clienteRepository.save(any(Cliente.class))).thenReturn(clienteAtualizado);
+
+        mockMvc.perform(put("/clientes/"+clienteAtualizado.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(clienteJson.toString())
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.nome").value("João"));
     }

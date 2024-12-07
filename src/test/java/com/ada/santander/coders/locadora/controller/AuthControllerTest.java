@@ -66,7 +66,7 @@ class AuthControllerTest {
 
     @Test
     void testRegisterSuccess() throws Exception {
-        RegisterDTO registerDTO = new RegisterDTO("newUser", "newPassword", null, "New User", "98765432100", "newuser@example.com");
+        RegisterDTO registerDTO = new RegisterDTO("newUser", "newPassword", UserRole.USER, "New User", "98765432100", "newuser@example.com");
 
         when(userService.findByLogin(registerDTO.login())).thenReturn(null);
         doNothing().when(userService).saveUser(registerDTO);

@@ -1,9 +1,10 @@
 package com.ada.santander.coders.locadora.integracao;
 
+import com.ada.santander.coders.locadora.dto.AgenciaDTO;
 import com.ada.santander.coders.locadora.dto.RegisterDTO;
 import com.ada.santander.coders.locadora.dto.UserDTO;
+import com.ada.santander.coders.locadora.entity.Agencia;
 import com.ada.santander.coders.locadora.entity.enums.UserRole;
-import com.ada.santander.coders.locadora.response.LoginResponseDTO;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,13 +72,20 @@ public class AuthIntegrationTest {
     void testAccessProtectedRoute() {
         HttpHeaders headersWithBody = new HttpHeaders(headers);
         headersWithBody.setContentType(MediaType.APPLICATION_JSON);
-        String body = "{\"campoExemplo\": \"valorExemplo\"}";
 
-        ResponseEntity<String> protectedResponse = restTemplate.exchange(
-                getUrl("/veiculo"), HttpMethod.POST, new HttpEntity<>(body, headersWithBody),
-                String.class
-        );
-        assertEquals(200, protectedResponse.getStatusCodeValue());
+        AgenciaDTO agenciaDTO = new AgenciaDTO();
+        agenciaDTO.setTamanhoMaximoDaFrota(10);
+        agenciaDTO.setCep("02258010");
+
+        ResponseEntity<Agencia> protectedResponse = restTemplate
+                .exchange(
+                        getUrl("/agencia/criar-agencia"),
+                        HttpMethod.POST,
+                        new HttpEntity<>(agenciaDTO, headers),
+                        Agencia.class
+                );
+
+        assertEquals(201, protectedResponse.getStatusCodeValue());
     }
 
 }
