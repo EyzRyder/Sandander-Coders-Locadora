@@ -18,7 +18,7 @@ public class TokenService {
     final String ISSUER = "ada-store";
 
     @Value("${jwt-secret}")
-    private String secret;
+    public String secret;
 
 
     public String generateToken(User user) throws JWTCreationException {

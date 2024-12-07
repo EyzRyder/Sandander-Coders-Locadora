@@ -1,5 +1,6 @@
 package com.ada.santander.coders.locadora.controller;
 
+import com.ada.santander.coders.locadora.dto.ClienteDTO;
 import com.ada.santander.coders.locadora.entity.Cliente;
 import com.ada.santander.coders.locadora.service.ClienteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,15 +62,23 @@ public class ClienteController {
             @ApiResponse(responseCode = "400", description = "Erro de validação"),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
+
     @PutMapping("/{id}")
-    public ResponseEntity<Cliente> atualizar(@PathVariable Long id, @RequestBody Cliente clienteAtualizado) {
+    public ResponseEntity<Cliente> atualizar(@PathVariable Long id, @RequestBody ClienteDTO clienteAtualizado) {
         try {
             Cliente cliente = clienteService.atualizar(id, clienteAtualizado);
-            return ResponseEntity.ok(cliente);
+            if (cliente != null) {
+                return ResponseEntity.ok(cliente);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
     }
+
+
+
 
 
     @Operation(summary = "Deletar um cliente", description = "Deleta um cliente pelo ID")
