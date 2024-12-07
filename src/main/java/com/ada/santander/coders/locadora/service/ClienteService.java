@@ -1,5 +1,6 @@
 package com.ada.santander.coders.locadora.service;
 
+import com.ada.santander.coders.locadora.dto.ClienteDTO;
 import com.ada.santander.coders.locadora.entity.Cliente;
 import com.ada.santander.coders.locadora.repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,20 +41,26 @@ public class ClienteService {
         return clienteRepository.save(cliente);
     }
 
+
     @Transactional
-    public Cliente atualizar(Long id, Cliente clienteAtualizado) {
+    public Cliente atualizar(Long id, ClienteDTO clienteAtualizado) {
         return clienteRepository.findById(id)
                 .map(cliente -> {
                     LOGGER.info("Validando cliente antes de atualizar...");
                     validarCliente(clienteAtualizado);
+
                     cliente.setNome(clienteAtualizado.getNome());
                     cliente.setCpf(clienteAtualizado.getCpf());
                     cliente.setEmail(clienteAtualizado.getEmail());
                     cliente.setTelefone(clienteAtualizado.getTelefone());
-                    return clienteRepository.save(cliente);
+
+                    Cliente clienteSalvo = clienteRepository.save(cliente);
+                    LOGGER.info("Cliente atualizado com sucesso: " + clienteSalvo);
+                    return clienteSalvo;
                 })
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
     }
+
 
     @Transactional
     public void deletar(Long id) {
@@ -81,5 +88,26 @@ public class ClienteService {
         }
 
         LOGGER.info("Cliente validado com sucesso.");
+    }
+
+    private void validarCliente(ClienteDTO cliente) {
+        if (!StringUtils.hasLength(cliente.getNome()) || cliente.getNome().length() <= 3) {
+            throw new IllegalArgumentException("O nome deve ter mais de 3 caracteres.");
+        }
+
+        if (!cliente.getCpf().matches("\\d{11}")) {
+            throw new IllegalArgumentException("O CPF deve ter 11 dígitos numéricos.");
+        }
+
+        if (!EMAIL_PATTERN.matcher(cliente.getEmail()).matches()) {
+            throw new IllegalArgumentException("O e-mail está em um formato inválido.");
+        }
+
+        if (!cliente.getTelefone().matches("\\d{8,15}")) {
+            throw new IllegalArgumentException("O telefone deve ter entre 8 e 15 dígitos numéricos.");
+        }
+
+        LOGGER.info("Cliente validado com sucesso.");
+
     }
 }

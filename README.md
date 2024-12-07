@@ -15,7 +15,7 @@ Este é um projeto REST API desenvolvido em Java com Spring Boot que gerencia o 
 ## Instalação e Configuração
 
 1. Pré-requisitos:
-    -   Java 21 
+    - Java 21 
     - Maven 3.x
 2. Clonar o repositório:
    ````bash
@@ -25,8 +25,8 @@ Este é um projeto REST API desenvolvido em Java com Spring Boot que gerencia o 
 3. Configurar o Banco de Dados: O projeto utiliza o banco de dados H2 em memória. Nenhuma configuração adicional é necessária para ambiente de desenvolvimento.
 bash
    ````bash
-   .\mvnw.cmd clean install
-   .\mvnw.cmd spring-boot:run
+   ./mvn.cmd clean install
+   ./mvn.cmd spring-boot:run
    ````
 4. Acessar o Banco de Dados H2:
 
@@ -35,7 +35,10 @@ bash
    - JDBC URL: jdbc:h2:mem:testdb 
    - Usuário: sa 
    - Senha: (em branco)
-
+5. Testar 
+   ````bash
+   ./mvn.cmd test
+   ````
 ## Documentação da API
 A documentação Swagger está disponível em: http://localhost:8081/swagger-ui.html
 

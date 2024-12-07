@@ -24,6 +24,16 @@ public class ClienteDTO {
     @NotBlank(message = "O telefone é obrigatório")
     private String telefone;
 
+    @Override
+    public String toString() {
+        return "{" +
+                "nome='" + nome + '\'' +
+                ", cpf='" + cpf + '\'' +
+                ", email='" + email + '\'' +
+                ", telefone='" + telefone + '\'' +
+                '}';
+    }
+
 }
 
 

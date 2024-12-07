@@ -1,8 +1,10 @@
 package com.ada.santander.coders.locadora.response;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class CepResponse {
     private String cep;
     private String logradouro;
