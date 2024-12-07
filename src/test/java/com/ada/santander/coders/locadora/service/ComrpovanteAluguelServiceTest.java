@@ -1,7 +1,6 @@
-package com.ada.santander.coders.locadora.aluguel.service;
+package com.ada.santander.coders.locadora.service;
 import com.ada.santander.coders.locadora.entity.*;
 import com.ada.santander.coders.locadora.repository.*;
-import com.ada.santander.coders.locadora.service.ComprovanteAluguelService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;

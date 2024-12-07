@@ -1,9 +1,8 @@
-package com.ada.santander.coders.locadora.aluguel.service;
+package com.ada.santander.coders.locadora.service;
 
 import com.ada.santander.coders.locadora.entity.ComprovanteAluguel;
 import com.ada.santander.coders.locadora.entity.ComprovanteDevolucao;
 import com.ada.santander.coders.locadora.entity.Veiculo;
-import com.ada.santander.coders.locadora.service.ComprovanteDevolucaoService;
 import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

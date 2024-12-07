@@ -1,4 +1,4 @@
-package com.ada.santander.coders.locadora.aluguel.service;
+package com.ada.santander.coders.locadora.service;
 
 import com.ada.santander.coders.locadora.dto.AluguelDTO;
 import com.ada.santander.coders.locadora.entity.Agencia;
@@ -7,8 +7,6 @@ import com.ada.santander.coders.locadora.entity.Veiculo;
 import com.ada.santander.coders.locadora.repository.AgenciaRepository;
 import com.ada.santander.coders.locadora.repository.ComprovanteAluguelRepository;
 import com.ada.santander.coders.locadora.repository.VeiculoRepository;
-import com.ada.santander.coders.locadora.service.AluguelService;
-import com.ada.santander.coders.locadora.service.ComprovanteAluguelService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

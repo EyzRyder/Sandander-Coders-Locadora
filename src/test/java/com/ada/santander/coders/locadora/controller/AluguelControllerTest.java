@@ -1,6 +1,5 @@
-package com.ada.santander.coders.locadora.aluguel.controller;
+package com.ada.santander.coders.locadora.controller;
 
-import com.ada.santander.coders.locadora.controller.AluguelController;
 import com.ada.santander.coders.locadora.dto.AluguelDTO;
 import com.ada.santander.coders.locadora.entity.ComprovanteAluguel;
 import com.ada.santander.coders.locadora.entity.ComprovanteDevolucao;
